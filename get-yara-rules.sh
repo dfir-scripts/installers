@@ -12,4 +12,4 @@ git clone https://github.com/reversinglabs/reversinglabs-yara-rules.git /usr/loc
 [ "$(ls -A /usr/local/src/yara/yararules.com/)" ] && \
 git -C /usr/local/src/yara/yararules.com pull --no-rebase || \
 git clone https://github.com/Yara-Rules/rules.git /usr/local/src/yara/yararules.com
-echo "Yara rules saved to /urs/local/src"
+echo "Yara rules saved to /urs/local/src/yara/"
