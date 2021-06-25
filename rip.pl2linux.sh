@@ -12,14 +12,11 @@
 echo "rip.pl-2linux.sh"
 [ -e rip.pl ] && echo "rip.pl in current path:" && md5sum rip.pl|| echo "rip.pl not in current path:"  
 [ -e rip.pl ] && cp rip.pl rip.pl.linux || exit
-# Replace Windows hash bang and set perl lib
+# Set path, replace Windows hash bang and set perl lib
+sed -i '77i my \$plugindir \= \"\/usr\/share\/regripper\/plugins\/\"\;' rip.pl.linux 
 sed -i '/^#! c:[\]perl[\]bin[\]perl.exe/d' rip.pl.linux
 sed -i "1i #!`which perl`" rip.pl.linux
 sed -i '2i use lib qw(/usr/lib/perl5/);' rip.pl.linux
-sed -i 's/\#push/push/' rip.pl.linux
-sed -i 's/\#my\ \$plugindir/\my\ \$plugindir/g' rip.pl.linux
-sed -i 's/\"plugins\/\"\;/\"\/usr\/share\/regripper\/plugins\/\"\;/' rip.pl.linux
-sed -i 's/(\"plugins\")\;/(\"\/usr\/share\/regripper\/plugins\")\;/' rip.pl.linux
 
 [ -e rip.pl.linux ] && echo "rip.pl.linux file created!" && md5sum rip.pl.linux
 echo -e "replace original rip.pl with new file rip.pl.linux
