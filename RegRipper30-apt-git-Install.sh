@@ -26,13 +26,10 @@ cp regripper/Base.pm /usr/share/perl5/Parse/Win32Registry/Base.pm
 #[ -f regripper/rip.pl ] && echo "rip.pl found!" || echo "rip.pl not found!"
 #[ -f regripper/rip.pl ] && cp regripper/rip.pl rip.pl.linux || exit
 cp regripper/rip.pl regripper/rip.pl.linux || exit
+sed -i '77i my \$plugindir \= \"\/usr\/share\/regripper\/plugins\/\"\;' /usr/local/src/regripper/rip.pl.linux 
 sed -i '/^#! c:[\]perl[\]bin[\]perl.exe/d' /usr/local/src/regripper/rip.pl.linux
 sed -i "1i #!`which perl`" /usr/local/src/regripper/rip.pl.linux
 sed -i '2i use lib qw(/usr/lib/perl5/);' /usr/local/src/regripper/rip.pl.linux
-sed -i 's/\#push/push/' /usr/local/src/regripper/rip.pl.linux
-sed -i 's/\#my\ \$plugindir/\my\ \$plugindir/g' /usr/local/src/regripper/rip.pl.linux
-sed -i 's/\"plugins\/\"\;/\"\/usr\/share\/regripper\/plugins\/\"\;/' /usr/local/src/regripper/rip.pl.linux
-sed -i 's/(\"plugins\")\;/(\"\/usr\/share\/regripper\/plugins\")\;/' /usr/local/src/regripper/rip.pl.linux
 md5sum /usr/local/src/regripper/rip.pl.linux && echo "rip.pl.linux file created!"
 
 # Copy rip.pl.linux to /usr/local/bin/rip.pl
