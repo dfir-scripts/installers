@@ -171,7 +171,7 @@ function main_install(){
   done
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite hashcat foremost testdisk chntpw graphviz ifuse"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite hashcat foremost testdisk chntpw graphviz ifuse"
 
   for apt_pkg in $sift_apt_pkgs;
   do
