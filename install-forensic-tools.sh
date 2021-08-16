@@ -277,7 +277,11 @@ function main_install(){
   tar -xvf /tmp/mft*.gz -C /usr/local/src/
   chmod 755 /usr/local/src/mft_dump/mft_dump && cp /usr/local/src/mft_dump/mft_dump /usr/local/bin/ || pause
 
-  #Download lf File Browser
+  # Download parse_evtx
+  wget -O /tmp/parse_evtx https://github.com/KasperskyLab/ForensicsTools/raw/master/BINARIES/Linux_64/parse_evtx || pause
+  chmod 755 /tmp/parse_evtx && cp/tmp/parse_evtx /usr/local/bin/
+
+ #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
   grep browser_download_url | grep lf-linux-amd64.tar.gz | \
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
@@ -329,12 +333,14 @@ function main_install(){
   wget -O /usr/local/src/irit/parse_evtx_accounts.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_accounts.py || pause
   wget -O /usr/local/src/irit/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
   wget -O /usr/local/src/irit/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
-  #wget -O /usr/local/src/irit/parse_evtx_RDP_Core.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Core.py || pause
+  wget -O /usr/local/src/irit/parse_evtx_RDP_Core.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Core.py || pause
+  wget -O /usr/local/src/irit/grab-winfiles.sh https://raw.githubusercontent.com/dfir-scripts/shellscripts/master/grab-winfiles.sh
   chmod -R 755 /usr/local/src/irit/*  || pause 
   [ -f "/usr/local/bin/irit.sh" ]  || cp /usr/local/src/irit/irit.sh /usr/local/bin/siftgrab || pause 
   [ -f "/usr/local/bin/ermount" ]  ||cp /usr/local/src/irit/ermount.sh /usr/local/bin/ermount || pause 
   [ -f "/usr/local/bin/prefetchruncounts.py" ] || cp /usr/local/src/irit/prefetchruncounts.py /usr/local/bin/prefetchruncounts.py || pause 
   [ -f "/usr/local/bin/winservices.py" ] || cp /usr/local/src/irit/winservices.py /usr/local/bin/winservices.py || pause
+  [ -f "/usr/local/bin/grab-winfiles.sh" ] || cp /usr/local/src/irit/winservices.py /usr/local/bin/grab-winfiles || pause  
   cp /usr/local/src/irit/parse_evtx*.py /usr/local/bin/ || pause
 
   #install RegRipper.git and RegRipper install script
