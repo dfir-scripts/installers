@@ -39,29 +39,29 @@ Disk Imaging and mounting
 # apfs-fuse
 
 Artifact			|   Parser 
-# $MFT				|   AnalyzeMFT,MFT_Dump
+# $MFT				|	AnalyzeMFT,MFT_Dump
 # $USNJRNL			|	usnparser.py
 # Registry			|	Regripper 3.0
-# Usrclass.dat		|   Regripper 3.0
-# amcache.hve		|   Regripper 3.0
-# Srudb.dat 		|	esedbexport
-# Webcachev0x.dat	| 	esedbexport
-# Alt. DataStreams	|	ads2tln.sh  
+# Usrclass.dat			|	Regripper 3.0
+# amcache.hve			|	Regripper 3.0
+# Srudb.dat 			|	esedbexport
+# Webcachev0x.dat		|	esedbexport
+# Alt. DataStreams		|	ads2tln.sh  
 # Prefetch 			|	prefetchruncounts.py
-# lnk files 		|	lnkinfo
-# Index.dat 		|	parseie.pl
-# WindowsEvent Logs	|   siftgrab 
-# RecycleBin        |   siftgrab
-# OBJECTS.DATA 		|	PyWMIPersistenceFinder.py,CCM_RUA_Finder.py
-# Outlook Mailbox	|	pff-tools
-# Scheduled Tasks 	|	jobparser.py
-# BITS(qmgr.db)		|	bits_parser.py
-# Browser Artifacts	|	Hindsight, Kacos2000/Queries
+# lnk files			|	lnkinfo
+# Index.dat 			|	parseie.pl
+# WindowsEvent Logs		|	parse_evtx 
+# RecycleBin        		|	siftgrab
+# OBJECTS.DATA 			|	PyWMIPersistenceFinder.py,CCM_RUA_Finder.py
+# Outlook Mailbox		|	pff-tools
+# Scheduled Tasks 		|	jobparser.py
+# BITS(qmgr.db)			|	bits_parser.py
+# Browser Artifacts		|	Hindsight, Kacos2000/Queries
 # $INDX				|	INDXParse.py
-# WindowsTimeline	|	Kacos2000/WindowsTimeline
+# WindowsTimeline		|	Kacos2000/WindowsTimeline
 # RAM				|	Volatility3
-# User Access Logs	|	KStrike.py
-# ADS               |   siftgrab
+# User Access Logs		|	KStrike.py
+# ADS               		|	siftgrab
 # and more!
 
 Windows Event Log Parsers (csv):
