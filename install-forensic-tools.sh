@@ -279,7 +279,7 @@ function main_install(){
 
   # Download parse_evtx
   wget -O /tmp/parse_evtx https://github.com/KasperskyLab/ForensicsTools/raw/master/BINARIES/Linux_64/parse_evtx || pause
-  chmod 755 /tmp/parse_evtx && cp/tmp/parse_evtx /usr/local/bin/
+  chmod 755 /tmp/parse_evtx && cp /tmp/parse_evtx /usr/local/bin/
 
  #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
@@ -333,7 +333,7 @@ function main_install(){
   wget -O /usr/local/src/irit/parse_evtx_accounts.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_accounts.py || pause
   wget -O /usr/local/src/irit/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
   wget -O /usr/local/src/irit/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_RDP_Core.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Core.py || pause
+  #wget -O /usr/local/src/irit/parse_evtx_RDP_Core.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Core.py || pause
   wget -O /usr/local/src/irit/grab-winfiles.sh https://raw.githubusercontent.com/dfir-scripts/shellscripts/master/grab-winfiles.sh
   chmod -R 755 /usr/local/src/irit/*  || pause 
   [ -f "/usr/local/bin/irit.sh" ]  || cp /usr/local/src/irit/irit.sh /usr/local/bin/siftgrab || pause 
