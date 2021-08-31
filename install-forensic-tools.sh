@@ -271,7 +271,7 @@ function main_install(){
   #Download evtx_dump
   curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
   grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }' 
-  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src/mft_dump/mft_dump*musl /usr/local/bin/ || pause
+  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src/mft_dump/mft_dump* /usr/local/bin/ || pause
 
   #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
