@@ -50,7 +50,7 @@ Artifact			|   Parser
 # Prefetch 			|	prefetchruncounts.py
 # lnk files			|	lnkinfo
 # Index.dat 			|	parseie.pl
-# WindowsEvent Logs		|	parse_evtx 
+# WindowsEvent Logs		|	evtx_dump 
 # RecycleBin        		|	siftgrab
 # OBJECTS.DATA 			|	PyWMIPersistenceFinder.py,CCM_RUA_Finder.py
 # Outlook Mailbox		|	pff-tools
@@ -63,15 +63,6 @@ Artifact			|   Parser
 # User Access Logs		|	KStrike.py
 # ADS               		|	siftgrab
 # and more!
-
-Windows Event Log Parsers (csv):
-# Security.evtx (logins)
-# Security.evtx (processes)
-# Security.evtx (account changes)
-# Microsoft-Windows-Bits-Client/Operational.evtx 
-# Microsoft-Windows-TaskScheduler4Operational.evtx
-# Microsoft-Windows-TerminalServices-LocalSessionManager/Operational.evtx
-# Microsoft-Windows-TerminalServices-RemoteConnectionManager.evtx
 
 Directories created
 #  /mnt/raw 
@@ -271,17 +262,18 @@ function main_install(){
 
   # Use Wget and curl to download tools
   #Download MFT_dump
-  mkdir -p /usr/local/src/mft_dump
+  mkdir -p /usr/local/src/omerbenamram
   curl -s https://api.github.com/repos/omerbenamram/mft/releases/latest| \
   grep -E 'browser_download_url.*unknown-linux-gnu.tar.gz'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
-  tar -xvf /tmp/mft*.gz -C /usr/local/src/
-  chmod 755 /usr/local/src/mft_dump/mft_dump && cp /usr/local/src/mft_dump/mft_dump /usr/local/bin/ || pause
+  tar -xvf /tmp/mft*.gz -C /usr/local/src/omerbenamram
+  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/mft_dump/mft_dump /usr/local/bin/ || pause
 
-  # Download parse_evtx
-  wget -O /tmp/parse_evtx https://github.com/KasperskyLab/ForensicsTools/raw/master/BINARIES/Linux_64/parse_evtx || pause
-  chmod 755 /tmp/parse_evtx && cp /tmp/parse_evtx /usr/local/bin/
+  #Download evtx_dump
+  curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
+  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }' 
+  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src/mft_dump/mft_dump*musl /usr/local/bin/ || pause
 
- #Download lf File Browser
+  #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
   grep browser_download_url | grep lf-linux-amd64.tar.gz | \
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
