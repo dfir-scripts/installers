@@ -405,6 +405,7 @@ arch |grep x86_64 || display_usage
 which apt && main_install || display_usage
 [ "$1" == "-t" ] && add_tools || apt install autopsy -y
 updatedb
-rm /tmp/*.zip 2/dev/null
-rm /tmp/*.gz 2/dev/null
+rm /tmp/*.zip 2>dev/null
+rm /tmp/*.gz 2>dev/null
+rm /tmp/*.deb 2>dev/null
 history -c
