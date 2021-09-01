@@ -155,7 +155,7 @@ function main_install(){
   pip3 -V || pause
   
   #pip installs
-  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools launchpadlib hindsight unfurl"
+  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser launchpadlib hindsight unfurl"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -262,16 +262,19 @@ function main_install(){
 
   # Use Wget and curl to download tools
   #Download MFT_dump
-  mkdir -p /usr/local/src/omerbenamram
+  mkdir -p /usr/local/src/omerbenamram 
+   [ "$(ls -A /usr/local/src/omerbenamram/mft_dump)" ] && rm /usr/local/src/omerbenamram/mft_dump/mft_dump
   curl -s https://api.github.com/repos/omerbenamram/mft/releases/latest| \
   grep -E 'browser_download_url.*unknown-linux-gnu.tar.gz'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
   tar -xvf /tmp/mft*.gz -C /usr/local/src/omerbenamram
-  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/mft_dump/mft_dump /usr/local/bin/ || pause
+  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/omerbenamram/mft_dump/mft_dump /usr/local/bin/ || pause
 
   #Download evtx_dump
+  mkdir -p /usr/local/src/omerbenamram 
+  [ "$(ls -A /usr/local/src/omerbenamram/evtx_dump)" ] && rm /usr/local/src/omerbenamram/evtx_dump*
   curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
-  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }' 
-  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src/mft_dump/mft_dump* /usr/local/bin/ || pause
+  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }'  && \
+  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src//omerbenamram/evtx_dump* /usr/local/bin/ || pause
 
   #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
@@ -402,4 +405,6 @@ arch |grep x86_64 || display_usage
 which apt && main_install || display_usage
 [ "$1" == "-t" ] && add_tools || apt install autopsy -y
 updatedb
+rm /tmp/*.zip 2/dev/null
+rm /tmp/*.gz 2/dev/null
 history -c
