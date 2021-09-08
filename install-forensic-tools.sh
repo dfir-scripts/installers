@@ -274,7 +274,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/omerbenamram/evtx_dump)" ] && rm /usr/local/src/omerbenamram/evtx_dump*
   curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
   grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }'  && \
-  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src//omerbenamram/evtx_dump* /usr/local/bin/ || pause
+  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src//omerbenamram/evtx_dump* /usr/local/bin/evtx_dump || pause
 
   #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
@@ -405,7 +405,4 @@ arch |grep x86_64 || display_usage
 which apt && main_install || display_usage
 [ "$1" == "-t" ] && add_tools || apt install autopsy -y
 updatedb
-rm /tmp/*.zip 2>dev/null
-rm /tmp/*.gz 2>dev/null
-rm /tmp/*.deb 2>dev/null
 history -c
