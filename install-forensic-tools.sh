@@ -162,7 +162,7 @@ function main_install(){
   done
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite hashcat foremost testdisk chntpw graphviz ifuse"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite hashcat foremost testdisk chntpw graphviz ifuse clamav"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -270,11 +270,10 @@ function main_install(){
   chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/omerbenamram/mft_dump/mft_dump /usr/local/bin/ || pause
 
   #Download evtx_dump
-  mkdir -p /usr/local/src/omerbenamram 
-  [ "$(ls -A /usr/local/src/omerbenamram/evtx_dump)" ] && rm /usr/local/src/omerbenamram/evtx_dump*
+  rm /usr/local/src/omerbenamram/evtx_dump/*  || mkdir -p /usr/local/src/omerbenamram/evtx_dump
   curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
-  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -P /usr/local/src/omerbenamram/ "$4) }'  && \
-  chmod 755 /usr/local/src/omerbenamram/evtx_dump* && cp /usr/local/src//omerbenamram/evtx_dump* /usr/local/bin/evtx_dump || pause
+  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/evtx_dump/evtx_dump "$4) }'  && \
+  chmod 755 /usr/local/src/omerbenamram/evtx_dump/evtx_dump && cp /usr/local/src/omerbenamram/evtx_dump/evtx_dump /usr/local/bin/evtx_dump || pause
 
   #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
@@ -284,7 +283,7 @@ function main_install(){
   chmod 755 /tmp/lf && cp /tmp/lf /usr/local/bin/lf || pause
 
   # Download Floss
-  curl -s https://api.github.com/repos/fireeye/flare-floss/releases/latest | \
+  curl -s https://api.github.com/repos/mandiant/flare-floss/releases/latest | \
   grep -E 'browser_download_url'| grep linux.zip |\
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
   unzip -o /tmp/floss*linux.zip -d /tmp/
@@ -349,7 +348,7 @@ function add_tools(){
   # Extended Tools Install
   #Install tools from apt
   uname -a |grep -i microsoft && exit
-  extended_aptpkgs="gparted feh eog glogg bless binwalk samba remmina clamav clamtk gridsite-clients guymager graphviz wine winetricks"
+  extended_aptpkgs="gparted feh eog glogg bless binwalk samba remmina clamtk gridsite-clients guymager graphviz"
    
   for apt_pkg in $extended_aptpkgs;
   do
