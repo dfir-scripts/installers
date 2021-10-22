@@ -89,10 +89,10 @@ function install_powershell(){
 }
 
 function main_install(){
-  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y || pause
+  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y 
   apt-get update || pause
   apt-get upgrade -q -y -u  || pause
-  add-apt-repository ppa:gift/stable -y || pause
+  add-apt-repository ppa:gift/stable -y 
   
   #Set python3 as python and Install pip and pip3
   echo "Requires python2 for legacy scripts"
