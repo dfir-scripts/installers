@@ -3,7 +3,7 @@
 << ////
 This is a consolidation of open source tools and custom scripts
 It is a basic IR triage tools for examining Windows systems in a 
-Linux evnironment.  Tested on Ubuntu 20.04 and Kali Windows WSL2
+Linux evnironment.  Tested on Ubuntu 20.04, Kali, Windows WSL2 and SANS SiFT
 
 Just run this install script for a basic install
 Use the "-t" switch to install additional tools\
@@ -13,95 +13,49 @@ GUI version of Autopsy, download yara rules or reinstall Regripper.
 
 Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bin
 
-Installers:  
-# forensic-tools-install.sh
-# RegRipper30-apt-git-Install.sh
-# install-autospy-gui.sh
-# get-yara-rules.sh
+# Installers:  
+ forensic-tools-install.sh
+ RegRipper30-apt-git-Install.sh
+ install-autospy-gui.sh
+ get-yara-rules.sh
 
-General purpose forensic tool
-# siftgrab (Repurposed and updated all-in-one triage script I wrote for a SANS gold paper) 
+# General purpose forensic tool
+ Sleuthkit/Autopsy (Gui can be installed using install script: install-autospy-gui.sh)
+ siftgrab (Repurposed and updated all-in-one triage script I wrote for a SANS gold paper) 
 
-Disk Imaging and mounting
-# ftkimager
-# ermount
-# ewf-tools
-# afflib-tools
-# qemu-utils 
-# libbde-utils 
-# exfat-utils
-# libvshadow-utils
-# xmount
-# ddrescue 
-# testdisk 
-# ifuse
-# afro
-# apfs-fuse
+# Disk Mounting, Imaging and Carving
+ ftkimager,ermount,ewf-tools,afflib-tools,qemu-utils,libbde-utils,exfat-utils,libvshadow-utils
+ xmount,ddrescue,photorec/testdisk,ifuse,afro,apfs-fuse
 
-Artifact			|   Parser 
-# $MFT				|	AnalyzeMFT,MFT_Dump
-# $USNJRNL			|	usnparser.py
-# Registry			|	Regripper 3.0
-# Usrclass.dat			|	Regripper 3.0
-# amcache.hve			|	Regripper 3.0
-# Srudb.dat 			|	esedbexport
-# Webcachev0x.dat		|	esedbexport
-# Alt. DataStreams		|	ads2tln.sh  
-# Prefetch 			|	prefetchruncounts.py
-# lnk files			|	lnkinfo
-# Index.dat 			|	parseie.pl
-# WindowsEvent Logs		|	evtx_dump 
-# RecycleBin        		|	siftgrab
-# OBJECTS.DATA 			|	PyWMIPersistenceFinder.py,CCM_RUA_Finder.py
-# Outlook Mailbox		|	pff-tools
-# Scheduled Tasks 		|	jobparser.py
-# BITS(qmgr.db)			|	bits_parser.py
-# Browser Artifacts		|	Hindsight, Kacos2000/Queries
-# $INDX				|	INDXParse.py
-# WindowsTimeline		|	Kacos2000/WindowsTimeline
-# RAM				|	Volatility3
-# User Access Logs		|	KStrike.py
-# ADS               		|	siftgrab
-# and more!
+# Parsers  
+AnalyzeMFT,MFT_Dump,usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
+esedbexport,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
+jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py
 
-Directories created
-#  /mnt/raw 
-#  /mnt/image_mount
-#  /mnt/vss
-#  /mnt/shadow
-#  /mnt/bde
-#  /mnt/smb
-#  /cases
+# File Analysis Tools
+Didier Stevens Tools,Floss,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
 
-Decoding and Carving Tools
-Floss, DEXRAY
+# Python Modules (installs python2, python3)
+python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfwsi-python
 
-Graphic Image
-python-registry, pefile, Didier Stevens Tools, iocextract,
-DeXRAY, oletools, attr(ADS), python3-libesedb, libesedb-utils,liblnk-utils, libevtx-utils, 
-pff-tools,PyWMIPersistenceFinder, CCM_RUA_Finder, kacos2000(WindowsTimeline, Sqlite Scripts),
-WFA Tools, LogFileParser, jq  feh yara  rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite,
-foremost "
+# Misc
+gift/stable repository,clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
-Gui Applications
-# CyberChef
+# Additional Tools (add using " ./install-forensic-tools.sh -t") 
+CyberChef,Bulk Extractor (Unconfigured),clamtk,Powershell,CyLR,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,clamtk,guymager,graphviz
 
-# CyLR
-# Powershell 
-# Sleuthkit  
-# Bulk Extractor (Uncoinfigured)
+# Yara Rules (fetch using get-yara-rules.sh)
+Nextron, ReversingLabs, yararules.com
 
-Entropy 
-# Density Scout
+# Directories created
+  /mnt/raw 
+  /mnt/image_mount
+  /mnt/vss
+  /mnt/shadow
+  /mnt/bde
+  /mnt/smb
+  /cases
 
-File Manager
-# lf file browser
-
-# graphviz
-# clamav, clamtk
-
-Yara Rules
-Thor (open source), ReversingLabs, yararules.com
 
 ////
 
@@ -135,10 +89,10 @@ function install_powershell(){
 }
 
 function main_install(){
-  add-apt-repository ppa:gift/stable -y || pause
+  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y || pause
   apt-get update || pause
   apt-get upgrade -q -y -u  || pause
-  apt-get install git curl python2 net-tools vim mlocate  -y || pause
+  add-apt-repository ppa:gift/stable -y || pause
   
   #Set python3 as python and Install pip and pip3
   echo "Requires python2 for legacy scripts"
@@ -155,14 +109,14 @@ function main_install(){
   pip3 -V || pause
   
   #pip installs
-  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser launchpadlib hindsight unfurl"
+  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser Jinja2 launchpadlib hindsight unfurl"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar python-jinja2 stegosuite hashcat foremost testdisk chntpw graphviz ifuse clamav"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ifuse clamav"
 
   for apt_pkg in $sift_apt_pkgs;
   do
