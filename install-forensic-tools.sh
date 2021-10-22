@@ -42,7 +42,7 @@ python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfws
 gift/stable repository,clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
 # Additional Tools (add using " ./install-forensic-tools.sh -t") 
-CyberChef,Bulk Extractor (Unconfigured),clamtk,Powershell,CyLR,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,clamtk,guymager,graphviz
+Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,Bulk Extractor (Unconfigured),clamtk,Powershell,CyLR,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,clamtk,guymager,graphviz
 
 # Yara Rules (fetch using get-yara-rules.sh)
 Nextron, ReversingLabs, yararules.com
@@ -315,6 +315,8 @@ function add_tools(){
   pwsh -v || install_powershell
   
   #Install additional tools from snap
+  which snap || apt install snapd
+  apparmor_status && systemctl enable --now snapd apparmor
   snap install brave || pause
   snap install okteta || pause
   snap install sqlitebrowser || pause
