@@ -288,7 +288,7 @@ function main_install(){
   [ -f "/usr/local/bin/ermount" ]  ||cp /usr/local/src/irit/ermount.sh /usr/local/bin/ermount || pause 
   [ -f "/usr/local/bin/prefetchruncounts.py" ] || cp /usr/local/src/irit/prefetchruncounts.py /usr/local/bin/prefetchruncounts.py || pause 
   [ -f "/usr/local/bin/winservices.py" ] || cp /usr/local/src/irit/winservices.py /usr/local/bin/winservices.py || pause
-  [ -f "/usr/local/bin/grab-winfiles.sh" ] || cp /usr/local/src/irit/winservices.py /usr/local/bin/grab-winfiles || pause  
+  [ -f "/usr/local/bin/grab-winfiles.sh" ] || cp /usr/local/src/irit/grab-winfiles.sh /usr/local/bin/grab-winfiles || pause  
   cp /usr/local/src/irit/parse_evtx*.py /usr/local/bin/ || pause
 
   #install RegRipper.git and RegRipper install script
