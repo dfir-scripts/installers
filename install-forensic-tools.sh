@@ -109,14 +109,14 @@ function main_install(){
   pip3 -V || pause
   
   #pip installs
-  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser Jinja2 launchpadlib hindsight unfurl"
+  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser Jinja2 launchpadlib"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ifuse clamav"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -176,24 +176,7 @@ function main_install(){
   git -C /usr/local/src/volatility pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility
   chmod 755  /usr/local/src/volatility/*.py
-
-#Git Chainsaw
-  mkdir -p /usr/local/src/chainsaw
-  [ "$(ls -A /usr/local/src/chainsaw)" ] && rm -r /usr/local/src/chainsaw
-  curl -s https://github.com/countercept/chainsaw/releases/latest |\
-  grep -E 'browser_download_url.*linux-musl.tar.gz'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
-  tar -xvf /tmp/chain*.gz -C /usr/local/src/chainsaw
-  chmod 755 /usr/local/src/chainsaw/chainsaw && cp /usr/local/src/chainsaw/chainsaw /usr/local/bin/ || pause
-
-  curl -s https://github.com/countercept/chainsaw/releases/latest |\
-  curl -s https://api.github.com/repos/orlikoski/CyLR/releases/latest | \
-  linux-musl.tar.gz
-  grep browser_download_url | grep CyLR_ | cut -d '"' -f 4| while read d; 
-  do 
-    wget -NP /usr/local/src/CyLR/ $d;
-  done
-  [ "$(ls -A /usr/local/src/CyLR/)" ] || pause
-  
+ 
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
   git -C /usr/local/src/kacos2000/Queries pull --no-rebase 2>/dev/null|| \
@@ -214,7 +197,12 @@ function main_install(){
   [ "$(ls -A /usr/local/src/DidierStevensSuite/)" ] && \
   git -C /usr/local/src/DidierStevensSuite pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/DidierStevens/DidierStevensSuite.git /usr/local/src/DidierStevensSuite
-  
+ 
+  #Git Hindsight
+  [ "$(ls -A /usr/local/src/Hindsight/)" ] && \
+  git -C /usr/local/src/Hindsight pull --no-rebase 2>/dev/null|| \
+  git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
+
   #Git Afro
   [ "$(ls -A /usr/local/src/cugu/afro )" ] && \
   git -C /usr/local/src/cugu/afro || \
