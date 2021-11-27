@@ -33,7 +33,7 @@ esedbexport,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM
 jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py
 
 # File Analysis Tools
-Didier Stevens Tools,Floss,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
+Didier Stevens Tools,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
 
 # Python Modules (installs python2, python3)
 python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfwsi-python
@@ -42,7 +42,7 @@ python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfws
 gift/stable repository,clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
 # Additional Tools (add using " ./install-forensic-tools.sh -t") 
-Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,Bulk Extractor (Unconfigured),clamtk,Powershell,CyLR,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,clamtk,guymager,graphviz
+Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,Bulk Extractor (Unconfigured),clamtk,Powershell,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,guymager,graphviz
 
 # Yara Rules (fetch using get-yara-rules.sh)
 Nextron, ReversingLabs, yararules.com
@@ -177,6 +177,23 @@ function main_install(){
   git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility
   chmod 755  /usr/local/src/volatility/*.py
 
+#Git Chainsaw
+  mkdir -p /usr/local/src/chainsaw
+  [ "$(ls -A /usr/local/src/chainsaw)" ] && rm -r /usr/local/src/chainsaw
+  curl -s https://github.com/countercept/chainsaw/releases/latest |\
+  grep -E 'browser_download_url.*linux-musl.tar.gz'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
+  tar -xvf /tmp/chain*.gz -C /usr/local/src/chainsaw
+  chmod 755 /usr/local/src/chainsaw/chainsaw && cp /usr/local/src/chainsaw/chainsaw /usr/local/bin/ || pause
+
+  curl -s https://github.com/countercept/chainsaw/releases/latest |\
+  curl -s https://api.github.com/repos/orlikoski/CyLR/releases/latest | \
+  linux-musl.tar.gz
+  grep browser_download_url | grep CyLR_ | cut -d '"' -f 4| while read d; 
+  do 
+    wget -NP /usr/local/src/CyLR/ $d;
+  done
+  [ "$(ls -A /usr/local/src/CyLR/)" ] || pause
+  
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
   git -C /usr/local/src/kacos2000/Queries pull --no-rebase 2>/dev/null|| \
@@ -235,13 +252,6 @@ function main_install(){
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
   tar -xvf /tmp/lf-linux*.gz -C /tmp
   chmod 755 /tmp/lf && cp /tmp/lf /usr/local/bin/lf || pause
-
-  # Download Floss
-  curl -s https://api.github.com/repos/mandiant/flare-floss/releases/latest | \
-  grep -E 'browser_download_url'| grep linux.zip |\
-  awk -F'"' '{system("wget -P /tmp "$4) }' && \
-  unzip -o /tmp/floss*linux.zip -d /tmp/
-  chmod 755 /tmp/floss && cp /tmp/floss /usr/local/bin/floss || pause
 
   # Download Density Scout
   wget -O /tmp/densityscout_build_45_linux.zip https://cert.at/media/files/downloads/software/densityscout/files/densityscout_build_45_linux.zip || pause
@@ -338,13 +348,6 @@ function add_tools(){
   git -C /usr/local/src/LogFileParser pull --no-rebase 2>/dev/null || \
   git clone https://github.com/jschicht/LogFileParser.git /usr/local/src/LogFileParser
 
-  #Git CyLR
-  curl -s https://api.github.com/repos/orlikoski/CyLR/releases/latest | \
-  grep browser_download_url | grep CyLR_ | cut -d '"' -f 4| while read d; 
-  do 
-    wget -NP /usr/local/src/CyLR/ $d;
-  done
-  [ "$(ls -A /usr/local/src/CyLR/)" ] || pause
 
   #Get CyberChef
   mkdir -p /usr/local/src/CyberChef
