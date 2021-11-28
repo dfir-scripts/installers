@@ -202,6 +202,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/Hindsight/)" ] && \
   git -C /usr/local/src/Hindsight pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
+  pip install pyhindsight
 
   #Git Afro
   [ "$(ls -A /usr/local/src/cugu/afro )" ] && \
