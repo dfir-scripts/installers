@@ -109,7 +109,7 @@ function main_install(){
   pip3 -V || pause
   
   #pip installs
-  sift_pip_pkgs="usnparser bs4 python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser Jinja2 launchpadlib"
+  sift_pip_pkgs="usnparser bs4 tabulate python-evtx libscca-python liblnk-python python-registry pefile libfwsi-python regex iocextract oletools bits_parser Jinja2 launchpadlib"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -135,11 +135,11 @@ function main_install(){
   cd /usr/local/src/analyzeMFT/ 
   python2 setup.py install || pause
 
-  #Git IRIT Files
-  [ "$(ls -A /usr/local/src/irit/ 2>/dev/null)" ] && \
-  git -C /usr/local/src/irit pull --no-rebase 2>/dev/null || \
-  git clone https://github.com/dfir-scripts/irit.git /usr/local/src/irit
-  [ "$(ls -A /usr/local/src/irit/)" ] && chmod 755 /usr/local/src/irit/* || pause
+  #Git DFIR-Script Files
+  [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/irit.git /usr/local/src/dfir-scripts
+  [ "$(ls -A /usr/local/src/dfir-scripts/)" ] && chmod 755 /usr/local/src/dfir-scripts/* || pause
 
   #Git and configure Harlan Carvey tools
   [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
@@ -219,7 +219,6 @@ function main_install(){
   git -C /usr/local/src/BitsParser || \
   git clone https://github.com/fireeye/BitsParser.git /usr/local/src/  
   
-
   # Use Wget and curl to download tools
   #Download MFT_dump
   mkdir -p /usr/local/src/omerbenamram 
@@ -248,12 +247,12 @@ function main_install(){
   chmod 755 /tmp/densityscout/lin64/densityscout && cp /tmp/densityscout/lin64/densityscout /usr/local/bin/
   
   # Download ftkimager
-  wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | tar -xzvf - -C /usr/local/src/irit/
-  chmod 755 /usr/local/src/irit/ftkimager && mv /usr/local/src/irit/ftkimager /usr/local/bin/  || pause
+  wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | tar -xzvf - -C /usr/local/src/dfir-scripts/
+  chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/  || pause
 
   #Download and configure DeXRAY
-  wget -O /usr/local/src/irit/DeXRAY.pl http://hexacorn.com/d/DeXRAY.pl
-  chmod 755 /usr/local/src/irit/DeXRAY.pl && mv /usr/local/src/irit/DeXRAY.pl /usr/local/bin/  || pause
+  wget -O /usr/local/src/dfir-scripts/DeXRAY.pl http://hexacorn.com/d/DeXRAY.pl
+  chmod 755 /usr/local/src/dfir-scripts/DeXRAY.pl && mv /usr/local/src/dfir-scripts/DeXRAY.pl /usr/local/bin/  || pause
   curl -L http://cpanmin.us | perl - --sudo App::cpanminus
   cpanm Crypt::RC4
   cpanm Digest::CRC
@@ -262,36 +261,32 @@ function main_install(){
   cpanm OLE::Storage_Lite
   
   # Get Job Parser
-  wget -O /usr/local/src/irit/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
-  mv /usr/local/src/irit/jobparser.py /usr/local/bin/
+  wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
+  mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
 
-  # Download Irit Tools
-  mkdir -p /usr/local/src/irit
-  wget -O /usr/local/src/irit/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
-  wget -O /usr/local/src/irit/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
-  wget -O /usr/local/src/irit/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
-  wget -O /usr/local/src/irit/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
-  wget -O /usr/local/src/irit/install-autospy-gui.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/install-autospy-gui.sh  || pause
-  wget -O /usr/local/src/irit/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
-  wget -O /usr/local/src/irit/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_accounts.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_accounts.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
-  wget -O /usr/local/src/irit/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
-  #wget -O /usr/local/src/irit/parse_evtx_RDP_Core.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Core.py || pause
-  wget -O /usr/local/src/irit/grab-winfiles.sh https://raw.githubusercontent.com/dfir-scripts/shellscripts/master/grab-winfiles.sh
-  chmod -R 755 /usr/local/src/irit/*  || pause 
-  [ -f "/usr/local/bin/irit.sh" ]  || cp /usr/local/src/irit/irit.sh /usr/local/bin/siftgrab || pause 
-  [ -f "/usr/local/bin/ermount" ]  ||cp /usr/local/src/irit/ermount.sh /usr/local/bin/ermount || pause 
-  [ -f "/usr/local/bin/prefetchruncounts.py" ] || cp /usr/local/src/irit/prefetchruncounts.py /usr/local/bin/prefetchruncounts.py || pause 
-  [ -f "/usr/local/bin/winservices.py" ] || cp /usr/local/src/irit/winservices.py /usr/local/bin/winservices.py || pause
-  [ -f "/usr/local/bin/grab-winfiles.sh" ] || cp /usr/local/src/irit/grab-winfiles.sh /usr/local/bin/grab-winfiles || pause  
-  cp /usr/local/src/irit/parse_evtx*.py /usr/local/bin/ || pause
+  # Download dfir-scripts Tools
+  mkdir -p /usr/local/src/dfir-scripts
+  wget -O /usr/local/src/dfir-scripts/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause 
+  wget -O /usr/local/src/dfir-scripts/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
+  wget -O /usr/local/src/dfir-scripts/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
+  wget -O /usr/local/src/dfir-scripts/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
+  wget -O /usr/local/src/dfir-scripts/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
+  wget -O /usr/local/src/dfir-scripts/install-autospy-gui.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/install-autospy-gui.sh  || pause
+  wget -O /usr/local/src/dfir-scripts/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_accounts.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_accounts.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
+  wget -O /usr/local/src/dfir-scripts/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
+  wget -O /usr/local/src/dfir-scripts/grab-winfiles.sh https://raw.githubusercontent.com/dfir-scripts/shellscripts/master/grab-winfiles.sh
+  chmod -R 755 /usr/local/src/dfir-scripts/*  || pause 
+  [ -f "/usr/local/bin/siftgrab" ]  || cp /usr/local/src/dfir-scripts/siftgrab /usr/local/bin/siftgrab || pause 
+  [ -f "/usr/local/bin/ermount" ]  ||cp /usr/local/src/dfir-scripts/ermount.sh /usr/local/bin/ermount || pause 
 
   #install RegRipper.git and RegRipper install script
-  /usr/local/src/irit/RegRipper30-apt-git-Install.sh
+  /usr/local/src/dfir-scripts/RegRipper30-apt-git-Install.sh
 
   #Create a symbolic link to /opt/share
   [ -d "/opt/share" ] || ln -s /usr/local/src/ /opt/share
