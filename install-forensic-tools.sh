@@ -39,7 +39,7 @@ Didier Stevens Tools,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
 python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfwsi-python
 
 # Misc
-gift/stable repository,clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
+clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
 # Additional Tools (add using " ./install-forensic-tools.sh -t") 
 Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,Bulk Extractor (Unconfigured),clamtk,Powershell,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,guymager,graphviz
@@ -92,7 +92,7 @@ function main_install(){
   apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y 
   apt-get update || pause
   apt-get upgrade -q -y -u  || pause
-  add-apt-repository ppa:gift/stable -y 
+  # add-apt-repository ppa:gift/stable -y 
   
   #Set python3 as python and Install pip and pip3
   echo "Requires python2 for legacy scripts"
