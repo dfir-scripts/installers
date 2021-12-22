@@ -19,13 +19,14 @@ Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bi
  install-autospy-gui.sh
  get-yara-rules.sh
 
-# General purpose forensic tool
+# General purpose timeline and forensic tools
+ plaso/log2timeline
  Sleuthkit/Autopsy (Gui can be installed using install script: install-autospy-gui.sh)
- siftgrab (Repurposed and updated all-in-one triage script I wrote for a SANS gold paper) 
+ siftgrab (outputs text file results from a combination of different tools)
 
 # Disk Mounting, Imaging and Carving
- ftkimager,ermount,ewf-tools,afflib-tools,qemu-utils,libbde-utils,exfat-utils,libvshadow-utils
- xmount,ddrescue,photorec/testdisk,ifuse,afro,apfs-fuse
+ ftkimager,ermount,ewf-tools/libewf-tools,afflib-tools,qemu-utils,libbde-utils/tools,exfat-utils,libvshadow-utils/tools
+ xmount,ddrescue,photorec/testdisk,ifuse,afro,apfs-fuse,bulk_extractor
 
 # Parsers  
 AnalyzeMFT,MFT_Dump,usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
@@ -41,8 +42,8 @@ python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfws
 # Misc
 clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
-# Additional Tools (add using " ./install-forensic-tools.sh -t") 
-Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,Bulk Extractor (Unconfigured),clamtk,Powershell,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,guymager,graphviz
+# Gui Tools (add using " ./install-forensic-tools.sh -t") 
+Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,clamtk,Powershell,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,guymager,graphviz
 
 # Yara Rules (fetch using get-yara-rules.sh)
 Nextron, ReversingLabs, yararules.com
@@ -80,6 +81,19 @@ function pause(){
  echo ""
 }
 
+function install_gift_ppa(){
+  apt remove libewf2 -y
+  lsb_release -a |grep -i kali && \
+  apt install libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb *plaso* -y
+  lsb_release -a |grep -E bionic\|focal && add-apt-repository ppa:gift/stable -y  
+  apt-get update || pause
+  apt-get upgrade -q -y -u  || pause
+  lsb_release -a |grep -E bionic\|focal && \
+  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools *plaso* bulk-extractor -y
+  [ "$1" == "-t" ] && add_tools || apt install autopsy -y
+}
+
+
 function install_powershell(){  
   hostname |grep kali && \
   apt install powershell -y || \
@@ -89,11 +103,9 @@ function install_powershell(){
 }
 
 function main_install(){
-  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y 
-  apt-get update || pause
-  apt-get upgrade -q -y -u  || pause
-  # add-apt-repository ppa:gift/stable -y 
-  
+  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y
+  install_gift_ppa
+ 
   #Set python3 as python and Install pip and pip3
   echo "Requires python2 for legacy scripts"
   echo "Assumes python3 is installed"
@@ -116,7 +128,7 @@ function main_install(){
   done
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd ewf-tools afflib-tools qemu-utils libbde-utils pigz python3-libesedb exfat-utils libvshadow-utils xmount libesedb-utils exif dc3dd python-is-python3 liblnk-utils libevtx-utils pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools qemu-utils pigz exfat-utils exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -345,6 +357,13 @@ echo "cpu check"
 arch |grep x86_64 || display_usage
 [ "$1" == "-h" ] && display_usage
 which apt && main_install || display_usage
-[ "$1" == "-t" ] && add_tools || apt install autopsy -y
 updatedb
 history -c
+echo ""
+lsb_release -a |grep -i kali && \
+echo "*****************************************" && \
+echo "To disable disk automount:" && \
+echo "set org.gnome.desktop.media-handling automount false"
+
+echo ""
+echo  "   Install Complete!"
