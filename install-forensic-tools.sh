@@ -85,10 +85,10 @@ function install_gift_ppa(){
   apt remove libewf2 -y
   cat /etc/issue|grep -i kali && \
   apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb *plaso* -y
-  cat /etc/issue|grep -E bionic\|focal && add-apt-repository ppa:gift/stable -y  
+  cat /etc/issue|grep -E "u 20"\|"u 18" && add-apt-repository ppa:gift/stable -y  
   apt-get update || pause
   apt-get upgrade -q -y -u  || pause
-  cat /etc/issue|grep -E bionic\|focal && \
+  cat /etc/issue|grep -Ei "u 20"\|"u 18" && \
   apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools *plaso* bulk-extractor -y
   [ "$1" == "-t" ] && add_tools || apt install autopsy -y
 }
