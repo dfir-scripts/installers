@@ -31,7 +31,7 @@ Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bi
 # Parsers  
 AnalyzeMFT,MFT_Dump,usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
 esedbexport,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
-jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py
+jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py,sqlite_miner
 
 # File Analysis Tools
 Didier Stevens Tools,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
@@ -83,12 +83,12 @@ function pause(){
 
 function install_gift_ppa(){
   apt remove libewf2 -y
-  lsb_release -a |grep -i kali && \
-  apt install libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb *plaso* -y
-  lsb_release -a |grep -E bionic\|focal && add-apt-repository ppa:gift/stable -y  
+  cat /etc/issue|grep -i kali && \
+  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb *plaso* -y
+  cat /etc/issue|grep -E bionic\|focal && add-apt-repository ppa:gift/stable -y  
   apt-get update || pause
   apt-get upgrade -q -y -u  || pause
-  lsb_release -a |grep -E bionic\|focal && \
+  cat /etc/issue|grep -E bionic\|focal && \
   apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools *plaso* bulk-extractor -y
   [ "$1" == "-t" ] && add_tools || apt install autopsy -y
 }
@@ -103,7 +103,7 @@ function install_powershell(){
 }
 
 function main_install(){
-  apt-get install git curl python2 net-tools vim mlocate software-properties-common  -y
+  apt-get install git curl python2 net-tools vim software-properties-common  -y
   install_gift_ppa
  
   #Set python3 as python and Install pip and pip3
@@ -149,9 +149,9 @@ function main_install(){
 
   #Git DFIR-Script Files
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
-  git -C /usr/local/src/dfir-scripts pull --no-rebase 2>/dev/null || \
-  git clone https://github.com/dfir-scripts/irit.git /usr/local/src/dfir-scripts
-  [ "$(ls -A /usr/local/src/dfir-scripts/)" ] && chmod 755 /usr/local/src/dfir-scripts/* || pause
+  git -C /usr/local/src/dfir-scripts/shellscripts pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/shellscripts.git /usr/local/src/dfir-scripts/shellscripts
+  [ "$(ls -A /usr/local/src/dfir-scripts/shellscripts)" ] && chmod 755 /usr/local/src/dfir-scripts/shellscripts/* || pause
 
   #Git and configure Harlan Carvey tools
   [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
@@ -192,12 +192,10 @@ function main_install(){
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
   git -C /usr/local/src/kacos2000/Queries pull --no-rebase 2>/dev/null|| \
-  #mkdir -p /usr/local/src/kacos2000 \
   git clone https://github.com/kacos2000/Queries.git /usr/local/src/kacos2000/Queries
 
   [ "$(ls -A /usr/local/src/kacos2000/WindowsTimeline 2>/dev/null)" ] && \
   git -C /usr/local/src/kacos2000/WindowsTimeline pull --no-rebase 2>/dev/null|| \
-  #mkdir -p /usr/local/src/kacos2000
   git clone https://github.com/kacos2000/WindowsTimeline.git /usr/local/src/kacos2000/WindowsTimeline
   
   #Git and configure INDXParse
@@ -215,6 +213,11 @@ function main_install(){
   git -C /usr/local/src/Hindsight pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
   pip install pyhindsight
+
+  #Git sqlite_miner
+  [ "$(ls -A /usr/local/src/sqlite_miner/)" ] && \
+  git -C /usr/local/src/sqlite_miner pull --no-rebase 2>/dev/null|| \
+  git clone https://github.com/threeplanetssoftware/sqlite_miner.git /usr/local/src/sqlite_miner
 
   #Git Afro
   [ "$(ls -A /usr/local/src/cugu/afro )" ] && \
@@ -277,28 +280,27 @@ function main_install(){
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
 
   # Download dfir-scripts Tools
-  mkdir -p /usr/local/src/dfir-scripts
-  wget -O /usr/local/src/dfir-scripts/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause 
-  wget -O /usr/local/src/dfir-scripts/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
-  wget -O /usr/local/src/dfir-scripts/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
-  wget -O /usr/local/src/dfir-scripts/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
-  wget -O /usr/local/src/dfir-scripts/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
-  wget -O /usr/local/src/dfir-scripts/install-autospy-gui.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/install-autospy-gui.sh  || pause
-  wget -O /usr/local/src/dfir-scripts/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_accounts.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_accounts.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
-  wget -O /usr/local/src/dfir-scripts/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
-  wget -O /usr/local/src/dfir-scripts/grab-winfiles.sh https://raw.githubusercontent.com/dfir-scripts/shellscripts/master/grab-winfiles.sh
+  mkdir -p /usr/local/src/dfir-scripts/{python,installers,ermount,siftgrab}
+  wget -O /usr/local/src/dfir-scripts/siftgrab/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause 
+  wget -O /usr/local/src/dfir-scripts/ermount/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
+  wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
+  wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
+  wget -O /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
+  wget -O /usr/local/src/dfir-scripts/installers/install-autospy-gui.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/install-autospy-gui.sh  || pause
+  wget -O /usr/local/src/dfir-scripts/installers/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_account_changes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_account_changes.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause 
-  [ -f "/usr/local/bin/siftgrab" ]  || cp /usr/local/src/dfir-scripts/siftgrab /usr/local/bin/siftgrab || pause 
-  [ -f "/usr/local/bin/ermount" ]  ||cp /usr/local/src/dfir-scripts/ermount.sh /usr/local/bin/ermount || pause 
+  cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause 
+  cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause 
 
   #install RegRipper.git and RegRipper install script
-  /usr/local/src/dfir-scripts/RegRipper30-apt-git-Install.sh
+  /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh
 
   #Create a symbolic link to /opt/share
   [ -d "/opt/share" ] || ln -s /usr/local/src/ /opt/share
@@ -331,13 +333,6 @@ function add_tools(){
   # Install R-Linux
   wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb && 
   dpkg -i /tmp/RLinux5_x64.deb || pause
-  
-  # Install from git
-  # git bulk extractor
-  [ "$(ls -A /usr/local/src/bulk_extractor/)" ] && \
-  git -C /usr/local/src/bulk_extractor pull --no-rebase 2>/dev/null|| \ 
-  git clone https://github.com/simsong/bulk_extractor.git /usr/local/src/bulk_extractor 
-  # Requires a manual install bulk extractor
 
   #Git LogFileParser
   [ "$(ls -A /usr/local/src/LogFileParser/)" ] && \
@@ -357,10 +352,9 @@ echo "cpu check"
 arch |grep x86_64 || display_usage
 [ "$1" == "-h" ] && display_usage
 which apt && main_install || display_usage
-updatedb
 history -c
 echo ""
-lsb_release -a |grep -i kali && \
+cat /etc/issue|grep -i kali && \
 echo "*****************************************" && \
 echo "To disable disk automount:" && \
 echo "set org.gnome.desktop.media-handling automount false"
