@@ -235,13 +235,11 @@ function main_install(){
   git clone https://github.com/fireeye/BitsParser.git /usr/local/src/  
   
   # Use Wget and curl to download tools
-  #Download MFT_dump
-  mkdir -p /usr/local/src/omerbenamram 
-   [ "$(ls -A /usr/local/src/omerbenamram/mft_dump)" ] && rm /usr/local/src/omerbenamram/mft_dump/mft_dump
+  #Download mft_dump
+  rm /usr/local/src/omerbenamram/mft_dump/*  || mkdir -p /usr/local/src/omerbenamram/mft_dump
   curl -s https://api.github.com/repos/omerbenamram/mft/releases/latest| \
-  grep -E 'browser_download_url.*unknown-linux-gnu.tar.gz'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
-  tar -xvf /tmp/mft*.gz -C /usr/local/src/omerbenamram
-  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/omerbenamram/mft_dump/mft_dump /usr/local/bin/ || pause
+  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
+  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/omerbenamram/mft_dump/mft_dump /usr/local/bin/mft_dump || pause
 
   #Download evtx_dump
   rm /usr/local/src/omerbenamram/evtx_dump/*  || mkdir -p /usr/local/src/omerbenamram/evtx_dump
