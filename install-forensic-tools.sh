@@ -122,7 +122,7 @@ function main_install(){
   pip3 -V || pause
 
   #pip installs
-  sift_pip_pkgs="usnparser bs4 tabulate regex iocextract oletools bits_parser"
+  sift_pip_pkgs="python-evtx usnparser bs4 tabulate regex iocextract oletools bits_parser"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
