@@ -1,12 +1,11 @@
 #! /bin/bash
 
 << ////
-This is a consolidation of open source tools and custom scripts
+This is a consolidation of open source tools and open source scripts
 It is a basic IR triage tools for examining Windows systems in a
-Linux evnironment.  Tested on Ubuntu 20.04, Kali, Windows WSL2 and SANS SiFT
+Linux evnironment.  Tested on Ubuntu 20.04, Kali 2022.1, Windows WSL2 Ubuntu 20.04 and SANS SiFT
 
-Just run this install script for a basic install
-Use the "-t" switch to install additional tools\
+Just run this install script for as root to install requirements.  To update or reinstall, rerun install script.
 
 There are several installer script if you would like to install the
 GUI version of Autopsy, download yara rules or reinstall Regripper.
@@ -21,29 +20,29 @@ Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bi
 
 # General purpose timeline and forensic tools
  plaso/log2timeline
- Sleuthkit/Autopsy (Gui can be installed using install script: install-autospy-gui.sh)
- siftgrab (outputs text file results from a combination of different tools)
+ Sleuthkit/Autopsy
+ siftgrab
 
 # Disk Mounting, Imaging and Carving
  ftkimager,ermount,ewf-tools/libewf-tools,afflib-tools,qemu-utils,libbde-utils/tools,exfat-utils,libvshadow-utils/tools
- xmount,ddrescue,photorec/testdisk,ifuse,afro,apfs-fuse,bulk_extractor
+ xmount,ddrescue,photorec/testdisk,ifuse,afro,bulk_extractor
 
 # Parsers
-AnalyzeMFT,MFT_Dump,usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
+AnalyzeMFT,MFT_Dump,yarp, usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
 esedbexport,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
-jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py,sqlite_miner
+jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py,sqlite_miner,NTDSExtract
 
 # File Analysis Tools
 Didier Stevens Tools,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
 
-# Python Modules (installs python2, python3)
+# Python (python2, python3)
 python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfwsi-python
 
 # Misc
 clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
 
-# Gui Tools (add using " ./install-forensic-tools.sh -t")
-Snap,CyberChef,Bless,Okteta,Brave,SqliteBrowser,R-Linux, LogFileParser,clamtk,Powershell,gparted,feh,eog,glogg,bless,binwalk,samba,remmina,guymager,graphviz
+# Gui Tools
+# R-Linux, LogFileParser,clamtk,gparted,feh,eog,glogg,bless,binwalk,graphviz,guymager
 
 # Yara Rules (fetch using get-yara-rules.sh)
 Nextron, ReversingLabs, yararules.com
@@ -65,12 +64,12 @@ function display_usage(){
   clear
   echo "
   install-forensic-tools.sh
-  Running this script will download files
-  needed to install and run forensic tools on Debian x86_64 based systems
+  Downloads forensic tools to /usr/local/src
+  fullfills requirements for running siftgrab
+  Tested on Ubuntu 18.04, 20.04, Kali 20221 and WSL (Ubuntu 20.04)
 
-  USAGE: install-forensic-tools.sh -h -t
+  USAGE: install-forensic-tools.sh -h
 
-         -t Installs additional forensic tools
          -h Displays this help text
 
 		 "
@@ -83,34 +82,26 @@ function pause(){
 }
 
 function install_gift_ppa(){
-  apt remove libewf2 -y
-  cat /etc/issue|grep -i kali && \
-  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb plaso -y
-  cat /etc/issue|grep -E "u 20"\|"u 18" && add-apt-repository ppa:gift/stable -y
-  apt-get update || pause
-  apt-get upgrade -q -y -u  || pause
+  apt install software-properties-common -y && \
+  add-apt-repository ppa:gift/stable -y &&  apt update || pause
+  apt upgrade -q -y -u  || pause
   cat /etc/issue|grep -Ei "u 20"\|"u 18" && \
-  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor -y
-  [ "$1" == "-t" ] && add_tools || apt install autopsy -y
-}
-
-
-function install_powershell(){
-  hostname |grep kali && \
-  apt install powershell -y || \
-  apt install snapd -y &&\
-  snap install powershell --classic
-  pwsh -v || pause
+  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor  exfat-utils -y
 }
 
 function main_install(){
-  apt-get install git curl python2 net-tools vim software-properties-common  -y
-  install_gift_ppa
+  apt remove libewf2 -y
+  apt install git curl net-tools vim -y
+  cat /etc/issue|grep -E "u 2"\|"u 18" && install_gift_ppa
+
+  cat /etc/issue|grep -i kali && \
+  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb plaso -y
 
   #Set python3 as python and Install pip and pip3
   echo "Requires python2 for legacy scripts"
-  echo "Assumes python3 is installed"
-  which python3 && which python2 || pause
+  echo "Assume python3 or fail"
+  which python3 || pause
+  which python2 || apt install python2 -y 
 
   ############### Forensic Tools Download, Install and Confiuration ##########################
   #Make Disk Mount and Cases Directories
@@ -118,23 +109,35 @@ function main_install(){
   mkdir -p /cases
 
   #Install pip3
-  pip3 -V 2>/dev/null || apt-get install python3-pip -y
+  pip3 -V 2>/dev/null || apt install python3-pip -y
   pip3 -V || pause
 
   #pip installs
-  sift_pip_pkgs="python-evtx usnparser bs4 tabulate regex iocextract oletools bits_parser"
+  sift_pip_pkgs="python-evtx usnparser tabulate regex iocextract oletools bits_parser"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
-
+  
+  #Install yarp
+  git_release="https://github.com/msuhanov/yarp/releases/latest"
+  git_download="https://github.com/msuhanov/yarp/archive"
+  latest_ver=$(curl -s "$git_release" |grep -Po '(?<=tag/).*(?=")')
+  pip3 install $install_dir $git_download/$latest_ver.tar.gz
+  
+  #Install dfir_ntfs
+  git_release="https://github.com/msuhanov/dfir_ntfs/releases/latest"
+  git_download="https://github.com/msuhanov/dfir_ntfs/archive"
+  latest_ver=$(curl -s "$git_release" |grep -Po '(?<=tag/).*(?=")')
+  pip3 install $install_dir $git_download/$latest_ver.tar.gz  
+  
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools qemu-utils pigz exfat-utils exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate"
 
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
-    sudo apt-get install $apt_pkg -y
+    sudo apt install $apt_pkg -y
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
@@ -171,6 +174,11 @@ function main_install(){
    [ "$(ls -A /usr/local/src/Hindsight/)" ] && \
    git -C /usr/local/src/Hindsight pull --no-rebase 2>/dev/null|| \
    git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
+   mkdir /usr/local/src/Hindsight/requirements
+   cd /usr/local/src/Hindsight/requirements
+   pip3 download -r /usr/local/src/Hindsight/requirements.txt
+   cd /usr/local/src
+
 
   #Git and configure WMI Forensics
   [ "$(ls -A /usr/local/src/WMI_Forensics/ 2>/dev/null)" ] && \
@@ -178,16 +186,6 @@ function main_install(){
   git clone https://github.com/davidpany/WMI_Forensics.git /usr/local/src/WMI_Forensics
   cp /usr/local/src/WMI_Forensics/CCM_RUA_Finder.py /usr/local/bin/CCM_RUA_Finder.py || pause
   cp /usr/local/src/WMI_Forensics/PyWMIPersistenceFinder.py /usr/local/bin/PyWMIPersistenceFinder.py || pause
-
-  #Git apfs-fuse
-  apt install fuse libfuse3-dev bzip2 libbz2-dev cmake gcc libattr1-dev zlib1g-dev -y
-  [ "$(ls -A /usr/local/src/apfs-fuse/ 2>/dev/null)" ] && \
-  git -C /usr/local/src/apfs-fuse pull --no-rebase 2>/dev/null|| \
-  git clone https://github.com/sgan81/apfs-fuse.git /usr/local/src/apfs-fuse && \
-  cd /usr/local/src/apfs-fuse && git submodule init && git submodule update && \
-  mkdir -p /usr/local/src/apfs-fuse/build && cd /usr/local/src/apfs-fuse/build && \
-  cmake .. && make
-  cd /usr/local/src/
 
   #Git Volatility3
   [ "$(ls -A /usr/local/src/volatility/ 2>/dev/null)" ] && \
@@ -232,21 +230,47 @@ function main_install(){
   #Git BitsParser
   [ "$(ls -A /usr/local/src/BitsParser)" ] && \
   git -C /usr/local/src/BitsParser || \
-  git clone https://github.com/fireeye/BitsParser.git /usr/local/src/
+  git clone https://github.com/fireeye/BitsParser.git /usr/local/src/BitsParser
+
+    #Git EventTranscriptParser
+  [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
+  git -C /usr/local/src/EventTranscriptParser || \
+  git clone https://github.com/stuxnet999/EventTranscriptParser.git /usr/local/src/EventTranscriptParser
+
+     #Git ntdsxtract
+  [ "$(ls -A /usr/local/src/ntdsxtract)" ] && \
+  git -C /usr/local/src/ntdsxtract || \
+  git clone https://github.com/csababarta/ntdsxtract.git /usr/local/src/ntdsxtract
 
   # Use Wget and curl to download tools
-  #Download mft_dump
-  rm /usr/local/src/omerbenamram/mft_dump/*  || mkdir -p /usr/local/src/omerbenamram/mft_dump
-  curl -s https://api.github.com/repos/omerbenamram/mft/releases/latest| \
-  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
-  chmod 755 /usr/local/src/omerbenamram/mft_dump/mft_dump && cp /usr/local/src/omerbenamram/mft_dump/mft_dump /usr/local/bin/mft_dump || pause
+#Download mft_dump
+  mkdir -p /usr/local/src/omerbenamram/mft_dump/
+  git_release="https://api.github.com/repos/omerbenamram/mft/releases/latest"
+  install_dir="/usr/local/src/omerbenamram/mft_dump"
+  current_ver=$($install_dir/mft_dump -V 2>/dev/null|sed 's/.* /v/')
+  latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
+  [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
+  echo $updated_status "update version"
+  echo $current_ver "current version"
+  [ $updated_status ] || curl -s $git_release | \
+  grep -E 'browser_download_url.*64-unknown-linux-musl'| \
+  awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
+  chmod 755 $install_dir/mft_dump && cp $install_dir/mft_dump /usr/local/bin/mft_dump || pause
 
   #Download evtx_dump
-  rm /usr/local/src/omerbenamram/evtx_dump/*  || mkdir -p /usr/local/src/omerbenamram/evtx_dump
-  curl -s https://api.github.com/repos/omerbenamram/evtx/releases/latest| \
-  grep -E 'browser_download_url.*64-unknown-linux-musl'|awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/evtx_dump/evtx_dump "$4) }'  && \
-  chmod 755 /usr/local/src/omerbenamram/evtx_dump/evtx_dump && cp /usr/local/src/omerbenamram/evtx_dump/evtx_dump /usr/local/bin/evtx_dump || pause
-
+  mkdir -p /usr/local/src/omerbenamram/evtx_dump/
+  git_release="https://api.github.com/repos/omerbenamram/evtx/releases/latest"
+  install_dir="/usr/local/src/omerbenamram/evtx_dump"
+  current_ver=$($install_dir/evtx_dump -V 2>/dev/null|sed 's/.* /v/')
+  latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
+  [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
+  echo $updated_status "update version"
+  echo $current_ver "current version"
+  [ $updated_status ] || curl -s $git_release | \
+  grep -E 'browser_download_url.*64-unknown-linux-musl'| \
+  awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/evtx_dump/evtx_dump "$4) }'  && \
+  chmod 755 $install_dir/evtx_dump && cp $install_dir/evtx_dump /usr/local/bin/evtx_dump || pause
+   
   #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
   grep browser_download_url | grep lf-linux-amd64.tar.gz | \
@@ -260,26 +284,30 @@ function main_install(){
   chmod 755 /tmp/densityscout/lin64/densityscout && cp /tmp/densityscout/lin64/densityscout /usr/local/bin/
 
   # Download ftkimager
-  wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | tar -xzvf - -C /usr/local/src/dfir-scripts/
-  chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/  || pause
+  which ftkimager || \
+  wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
+  tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
+  chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
 
   #Download and configure DeXRAY
-  wget -O /usr/local/src/dfir-scripts/DeXRAY.pl http://hexacorn.com/d/DeXRAY.pl
-  chmod 755 /usr/local/src/dfir-scripts/DeXRAY.pl && mv /usr/local/src/dfir-scripts/DeXRAY.pl /usr/local/bin/  || pause
-  curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-  cpanm Crypt::RC4
-  cpanm Digest::CRC
-  cpanm Crypt::Blowfish
-  cpanm Archive::Zip
+  which DeXRAY.pl || \
+  wget -O /usr/local/src/dfir-scripts/DeXRAY.pl http://hexacorn.com/d/DeXRAY.pl && \
+  chmod 755 /usr/local/src/dfir-scripts/DeXRAY.pl && mv /usr/local/src/dfir-scripts/DeXRAY.pl /usr/local/bin/ &&\
+  curl -L http://cpanmin.us | perl - --sudo App::cpanminus && \
+  cpanm Crypt::RC4 && \
+  cpanm Digest::CRC  && \
+  cpanm Crypt::Blowfish && \
+  cpanm Archive::Zip && \
   cpanm OLE::Storage_Lite
 
   # Get Job Parser
+
   wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
 
   # Download dfir-scripts Tools
   mkdir -p /usr/local/src/dfir-scripts/{python,installers,ermount,siftgrab}
-  wget -O /usr/local/src/dfir-scripts/siftgrab/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause 
+  wget -O /usr/local/src/dfir-scripts/siftgrab/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause
   wget -O /usr/local/src/dfir-scripts/ermount/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
   wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
   wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
@@ -293,7 +321,7 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_account_changes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_account_changes.py || pause
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
-  chmod -R 755 /usr/local/src/dfir-scripts/*  || pause 
+  chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
 
@@ -304,31 +332,21 @@ function main_install(){
   [ -d "/opt/share" ] || ln -s /usr/local/src/ /opt/share
 }
 
-function add_tools(){
+function add_gui_tools(){
   # Extended Tools Install
   #Install tools from apt
   uname -a |grep -i microsoft && exit
-  extended_aptpkgs="gparted feh eog glogg bless binwalk samba remmina clamtk gridsite-clients guymager graphviz"
+  gui_aptpkgs="gparted feh eog glogg binwalk clamtk gridsite-clients graphviz guymager"
 
-  for apt_pkg in $extended_aptpkgs;
+  for apt_pkg in $gui_aptpkgs;
   do
     echo "Installing $apt_pkg"
-    sudo apt-get install $apt_pkg -y
+    sudo apt install $apt_pkg -y
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
-  # Install Powershell
-  pwsh -v || install_powershell
-
-  #Install additional tools from snap
-  which snap || apt install snapd
-  apparmor_status && systemctl enable --now snapd apparmor
-  snap install brave || pause
-  snap install okteta || pause
-  snap install sqlitebrowser || pause
-
-
   # Install R-Linux
+  which rlinux || \
   wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb &&
   dpkg -i /tmp/RLinux5_x64.deb || pause
 
@@ -349,6 +367,8 @@ function add_tools(){
 echo "cpu check"
 arch |grep x86_64 || display_usage
 [ "$1" == "-h" ] && display_usage
+which apt && apt update || pause
+ls /usr/share/xsessions/ 2>/dev/null && add_gui_tools
 which apt && main_install || display_usage
 history -c
 echo ""
