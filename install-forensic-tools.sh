@@ -319,8 +319,7 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_account_changes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_account_changes.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Local.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Local.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP_Remote.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP_Remote.py || pause
+  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP.py || pause
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
