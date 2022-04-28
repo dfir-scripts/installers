@@ -7,15 +7,13 @@ Linux evnironment.  Tested on Ubuntu 20.04, Kali 2022.1, Windows WSL2 Ubuntu 20.
 
 Just run this install script for as root to install requirements.  To update or reinstall, rerun install script.
 
-There are several installer script if you would like to install the
-GUI version of Autopsy, download yara rules or reinstall Regripper.
+There are installer scripts to download yara rules and install/reinstall Regripper.
 
 Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bin
 
 # Installers:
  forensic-tools-install.sh
  RegRipper30-apt-git-Install.sh
- install-autospy-gui.sh
  get-yara-rules.sh
 
 # General purpose timeline and forensic tools
@@ -54,7 +52,6 @@ Nextron, ReversingLabs, yararules.com
   /mnt/shadow
   /mnt/bde
   /mnt/smb
-  /mnt/usb
   /cases
 
 
