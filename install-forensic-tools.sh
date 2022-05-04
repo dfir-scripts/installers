@@ -125,7 +125,7 @@ function main_install(){
   #Install dfir_ntfs
   git_release="https://github.com/msuhanov/dfir_ntfs/releases/"
   git_download="https://github.com/msuhanov/dfir_ntfs/archive"
-  latest_ver=$(curl -s "$git_release" |grep -Po '(?<=tag/).*(?=" data)')
+  latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
   pip3 install $install_dir $git_download/$latest_ver.tar.gz  
   
   #Install Applications from Apt
