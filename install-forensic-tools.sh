@@ -117,9 +117,9 @@ function main_install(){
   done
   
   #Install yarp
-  git_release="https://github.com/msuhanov/yarp/releases/latest"
+  git_release="https://github.com/msuhanov/yarp/releases/"
   git_download="https://github.com/msuhanov/yarp/archive"
-  latest_ver=$(curl -s "$git_release" |grep -Po '(?<=tag/).*(?=")')
+  latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
   pip3 install $install_dir $git_download/$latest_ver.tar.gz
   
   #Install dfir_ntfs
@@ -309,7 +309,6 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
   wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
   wget -O /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
-  wget -O /usr/local/src/dfir-scripts/installers/install-autospy-gui.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/install-autospy-gui.sh  || pause
   wget -O /usr/local/src/dfir-scripts/installers/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
   wget -O /usr/local/src/dfir-scripts/python/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
