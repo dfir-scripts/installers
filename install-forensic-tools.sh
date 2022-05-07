@@ -247,8 +247,6 @@ function main_install(){
   current_ver=$($install_dir/mft_dump -V 2>/dev/null|sed 's/.* /v/')
   latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
   [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
-  echo $updated_status "update version"
-  echo $current_ver "current version"
   [ $updated_status ] || curl -s $git_release | \
   grep -E 'browser_download_url.*64-unknown-linux-musl'| \
   awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
@@ -261,8 +259,6 @@ function main_install(){
   current_ver=$($install_dir/evtx_dump -V 2>/dev/null|sed 's/.* /v/')
   latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
   [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
-  echo $updated_status "update version"
-  echo $current_ver "current version"
   [ $updated_status ] || curl -s $git_release | \
   grep -E 'browser_download_url.*64-unknown-linux-musl'| \
   awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/evtx_dump/evtx_dump "$4) }'  && \
@@ -285,6 +281,13 @@ function main_install(){
   wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
+
+  #Install chainsaw
+  git_release="https://github.com/countercept/chainsaw/releases"
+  git_download="https://github.com/countercept/chainsaw/releases/download/"
+  latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
+  wget $git_download/$latest_ver/chainsaw_x86_64-unknown-linux-musl.tar.gz -O - | tar -xzvf - -C /usr/local/src
+
 
   #Download and configure DeXRAY
   which DeXRAY.pl || \
@@ -342,8 +345,9 @@ function add_gui_tools(){
 
   # Install R-Linux
   which rlinux || \
-  wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb &&
-  dpkg -i /tmp/RLinux5_x64.deb || pause
+  wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb 
+  [ "$(ls /tmp/RLinux5_x64.deb)" ] && dpkg -i /tmp/RLinux5_x64.deb
+  which rlinux || pause
 
   #Git LogFileParser
   [ "$(ls -A /usr/local/src/LogFileParser/)" ] && \
