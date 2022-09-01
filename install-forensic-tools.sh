@@ -128,8 +128,14 @@ function main_install(){
   latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
   pip3 install $install_dir $git_download/$latest_ver.tar.gz  
   
+  #Install MemProcFS
+  mkdir -p /usr/local/src/MemProcFS
+  latest_MemProcFS=$(curl -s https://github.com/ufrisk/MemProcFS/releases/|grep -m 1 linux_x64|awk -F'"' '{print $2}')
+  wget https://github.com$latest_MemProcFS -O - | tar -xzvf - -C /usr/local/src/MemProcFS
+  
+  
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate"
 
   for apt_pkg in $sift_apt_pkgs;
   do
