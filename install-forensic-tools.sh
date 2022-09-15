@@ -27,7 +27,7 @@ Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bi
 
 # Parsers
 AnalyzeMFT,MFT_Dump,yarp, usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
-esedbexport,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
+esedbexport,srumdump,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
 jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py,sqlite_miner,NTDSExtract
 
 # File Analysis Tools
@@ -154,11 +154,24 @@ function main_install(){
   cd /usr/local/src/analyzeMFT/
   python2 setup.py install || pause
 
-  #Git DFIR-Script Files
+  #Git DFIR-Script shell scripts
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/shellscripts pull --no-rebase 2>/dev/null || \
   git clone https://github.com/dfir-scripts/shellscripts.git /usr/local/src/dfir-scripts/shellscripts
   [ "$(ls -A /usr/local/src/dfir-scripts/shellscripts)" ] && chmod 755 /usr/local/src/dfir-scripts/shellscripts/* || pause
+  
+    #Git DFIR-Scripts Eventlog parsers
+  [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/WinEventLogs pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/WinEventLogs.git /usr/local/src/dfir-scripts/WinEventLogs
+  [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/WinEventLogs* || pause
+  
+     #Git DFIR-Scripts Installer
+  [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/installers pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/installers.git /usr/local/src/dfir-scripts/installers
+  [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/installers || pause
+
 
   #Git and configure Harlan Carvey tools
   [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
@@ -234,6 +247,12 @@ function main_install(){
   [ "$(ls -A /usr/local/src/BitsParser)" ] && \
   git -C /usr/local/src/BitsParser || \
   git clone https://github.com/fireeye/BitsParser.git /usr/local/src/BitsParser
+
+  #Git Srum-Dump
+  [ "$(ls -A /usr/local/src/srum-dump)" ] && \
+  git -C /usr/local/src/Bitssrum-dump || \
+  git clone https://github.com/MarkBaggett/srum-dump.git /usr/local/src/srum-dump
+  pip install -qr requirements.txt
 
     #Git EventTranscriptParser
   [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
@@ -317,14 +336,6 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/ermount/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
   wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
   wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
-  wget -O /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/RegRipper30-apt-git-Install.sh  || pause
-  wget -O /usr/local/src/dfir-scripts/installers/get-yara-rules.sh https://raw.githubusercontent.com/dfir-scripts/installers/main/get-yara-rules.sh  || pause 
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_tasks.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_tasks.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_BITS.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_BITS.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_logins.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_logins.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_processes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_processes.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_account_changes.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_account_changes.py || pause
-  wget -O /usr/local/src/dfir-scripts/python/parse_evtx_RDP.py  https://raw.githubusercontent.com/dfir-scripts/WinEventLogs/master/parse_evtx_RDP.py || pause
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
