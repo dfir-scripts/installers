@@ -152,7 +152,7 @@ function main_install(){
   git clone https://github.com/dkovar/analyzeMFT.git /usr/local/src/analyzeMFT
   [ "$(ls -A /usr/local/src/analyzeMFT/)" ] || pause
   cd /usr/local/src/analyzeMFT/
-  python2 setup.py install || pause
+  python setup.py install || pause
 
   #Git DFIR-Script shell scripts
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
