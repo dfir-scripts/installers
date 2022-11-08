@@ -1,60 +1,196 @@
 #! /bin/bash
 
 << ////
-This is a consolidation of open source tools and open source scripts
-It is a basic IR triage tools for examining Windows systems in a
-Linux evnironment.  Tested on Ubuntu 20.04, Kali 2022.1, Windows WSL2 Ubuntu 20.04 and SANS SiFT
+This script installs open source forensic and disk tools and scripts on Debian based systems.
 
-Just run this install script for as root to install requirements.  To update or reinstall, rerun install script.
+The install creates an automated environment for running multiple open source forensic tools at once to examine Windows systems in a Linux evnironment.
+Tested on Ubuntu 20.04, Kali 2022.1, Windows WSL2 Ubuntu and SANS SiFT
 
-There are installer scripts to download yara rules and install/reinstall Regripper.
 
-Downloaded tools are located in /usr/local/src/ some are copied to /usr/local/bin
+##############################################################################################
+siftgrab is an automated environment for running multiple open source forensic tools at once to examine Windows systems in a Linux evnironment.
+Tested on Ubuntu, Kali, Windows WSL2 Ubuntu and SANS SiFT
 
-# Installers:
- forensic-tools-install.sh
- RegRipper30-apt-git-Install.sh
- get-yara-rules.sh
 
-# General purpose timeline and forensic tools
- plaso/log2timeline
- Sleuthkit/Autopsy
- siftgrab
+Work flow
+  Install:
+  To install with all the dependencies and extra tools, download and run the forensics tools install script:
+    wget https://raw.githubusercontent.com/dfir-scripts/installers/main/install-forensic-tools.sh
+    sudo chmod 755 install-forensic-tools.sh
+    sudo ./install-forensic-tools.sh
 
-# Disk Mounting, Imaging and Carving
- ftkimager,ermount,ewf-tools/libewf-tools,afflib-tools,qemu-utils,libbde-utils/tools,exfat-utils,libvshadow-utils/tools
- xmount,ddrescue,photorec/testdisk,ifuse,afro,bulk_extractor
+    # Directories created for disk mounting and evidence
+       /mnt/raw
+       /mnt/image_mount
+       /mnt/vss
+       /mnt/shadow
+       /mnt/bde
+       /mnt/smb
+       /cases
+......./opt/app/<open source tools directories>
 
-# Parsers
-AnalyzeMFT,MFT_Dump,yarp, usnparser.py,Regripper 3.0,Tools from WFA 4/e, timeline tools, etc. (Harlan Carvey),
-esedbexport,srumdump,prefetchruncounts.py,lnkinfo,evtx_dump,PyWMIPersistenceFinder.py,CCM_RUA_Finder.py,pff-tools,
-jobparser.py,bits_parser.py,Hindsight, Unfurl,Kacos2000/Queries,INDXParse.py,Volatility3,KStrike.py,sqlite_miner,NTDSExtract
+  To access the siftgrab menu simply type: sudo siftgrab
 
-# File Analysis Tools
-Didier Stevens Tools,DEXRAY,iocextract,stegosuite,oletools,pefile,Density Scout
 
-# Python (python2, python3)
-python-registry,python3-libesedb,python-evtx,libscca-python,liblnk-python,libfwsi-python
 
-# Misc
-clamav,lf,attr,libesedb-utils,liblnk-utils,libevtx-utils,pff-tools,jq,yara,rar,unrar,p7zip-full,p7zip-rar
+  Disk Image Mounting:
+    Mount disk images using the command "ermount" or using the siftgrab menu
 
-# Gui Tools
-# R-Linux, LogFileParser,clamtk,gparted,feh,eog,glogg,bless,binwalk,graphviz,guymager
+    The script searches for Windows files in a given path
+    (Point to a mounted disk or for data extracted from tools like KAPE)
+
+
+  Process Artifacts:
+    Use the menu to launch parsers
+
+##############################################################################################
+   siftgrab
+********************************************************
+ Mount and Extract Information From Windows Disk Images
+********************************************************
+**  1)  Mount a Disk or Disk Image (E01, Raw, AFF, QCOW VMDK, VHDX)
+**  2)  Process Windows Artifacts from Mounted Image or Offline Directory
+**  3)  Extract and Analyze Windows Event Logs
+**  4)  Run Regiripper on a Mounted Volume or Offline Directory
+**  5)  Acquire a Copy of Windows Forensic Artifacts from Mounted Image(s)
+**  6)  Browse Files (lf)
+**  7)  Read me
+
+Select a menu option number or enter to exit.
+
+
+siftgrab
+Automated Processing of Artifacts:
+##############################################################################################
+
+
+Artifact,Tool,Source
+------------------------------------------------------------------------------------------------------
+usnjrln,usnparser,https://github.com/PoorBillionaire/USN-Journal-Parser
+MFT,analyzeMFT,https://github.com/dkovar/analyzeMFT
+MFT,mft_dump,https://github.com/omerbenamram/mft
+Registry,Regripper,https://github.com/keydet89/RegRipper3.0
+Registry,Yarp,https://github.com/msuhanov/yarp
+Registry,registryFlush,https://github.com/Silv3rHorn/4n6_misc
+LNK,JumpList_Lnk_Parser,https://github.com/salehmuhaysin/JumpList_Lnk_Parser
+Jumplist,JumpList_Lnk_Parser,https://github.com/salehmuhaysin/JumpList_Lnk_Parser
+amcache.hve,Regripper,https://github.com/keydet89/RegRipper3.0
+Windows Prefetch,dfir-script,https://github.com/dfir-scripts/prefetchruncounts
+Recycle.bin,dfir-script,https://github.com/dfir-scripts/
+Chrome,dfir-script,https://github.com/dfir-scripts/
+FireFox,dfir-script,https://github.com/dfir-scripts/
+WebcacheV,esedbexport,https://github.com/libyal/libesedb
+OBJECTS.DATA,PyWMIPersistenceFinder,https://github.com/davidpany/WMI_Forensics
+OBJECTS.DATA,CCM_RUA_Finder,https://github.com/davidpany/WMI_Forensics
+Srudb.dat,srumdump,https://github.com/MarkBaggett/srum-dump
+current.mdb,kstrike,https://github.com/brimorlabs/KStrike
+ActivitiesCache.db,windowstimeline,https://github.com/kacos2000/WindowsTimeline
+index.dat,parseie,https://github.com/keydet89/Tools
+AlternateDataStreams,dfir-script,https://github.com/dfir-scripts/
+Windows Event Logs,evtx_dump,https://github.com/omerbenamram/evtx
+Windows Event Logs,Zircolite,https://github.com/wagga40/Zircolite
+Windows Event Logs,dfir-script,https://github.com/dfir-scripts/WinEventLogs
+
+
+Triage Output:
+By default extracted data goes to the /cases directory but can be directed to a network share are other locations
+ Triage Output Directories:
+    <Computer-Name>/Triage/
+    ActivitiesCache
+    Alert
+    BITS
+    Browser_Activity
+    Current.mdb
+    LNK
+    MFT
+    OBJECTS.DATA
+    PowerShell
+    Prefetch
+    RDP
+    Registry/Regripper
+    Registry/Yarp-registryFlush
+    ScheduledTasks
+    SRUDB.dat
+    Services
+    Timeline
+    USNJRNL
+    WindowsEventLogs/evtx_dump
+
+
+Additional Tools
+----------------------------------------------------------------------------------------------------
+log2timeline/plaso,https://github.com/log2timeline/plaso
+Sleuthkit/Autopsy,https://www.sleuthkit.org/autopsy/
+ftkimager,https://accessdata.com/product-download/debian-and-ubuntu-x64-3-1-1
+Guymager,https://guymager.sourceforge.io/
+ddrescue,https://www.gnu.org/software/ddrescue/
+photorec/testdisk,https://www.cgsecurity.org/
+Foremost,http://foremost.sourceforge.net/
+R-Linux,https://www.r-studio.com/free-linux-recovery-help/
+dc3dd,https://sourceforge.net/projects/dc3dd/
+afro,https://github.com/cugu/
+xmount,https://www.pinguin.lu/xmount
+afflib-tools,http://www.afflib.org/
+exfat-utils,https://github.com/relan/exfat
+qemu-utils,https://www.qemu.org/download/
+ifuse,https://github.com/libimobiledevice/ifuse
+gparted,https://gparted.org/
+dfir_ntfs,https://github.com/msuhanov/dfir_ntfs
+sqlite_miner,https://github.com/threeplanetssoftware
+bulk_extractor,https://github.com/simsong/bulk_extractor
+WFA 4/e Tools (Harlan Carvey),https://github.com/keydet89/Tools
+jobparser,https://github.com/gleeda
+bits_parser,https://github.com/ANSSI-FR/bits_parser
+Hindsight,https://github.com/obsidianforensics/hindsight
+INDXParse.py,https://github.com/williballenthin/INDXParse
+chainsaw,https://github.com/countercept/chainsaw/
+clamtk,https://github.com/dave-theunsub/clamtk
+feh,https://feh.finalrewind.org/
+eog,https://help.gnome.org/users/eog/stable/
+glogg,https://github.com/nickbnf/glogg
+CyberChef,https://github.com/gchq/CyberChef
+binwalk,https://github.com/ReFirmLabs/binwalk
+graphviz,https://graphviz.org/
+geoip-database,https://www.maxmind.com
+Volatility3,https://github.com/volatilityfoundation/
+NTDSExtract,https://github.com/csababarta/ntdsxtract
+Didier Stevens Suite,https://blog.didierstevens.com/didier-stevens-suite/
+DEXRAY,https://www.hexacorn.com/products_and_freebies.html
+iocextract,https://github.com/InQuest/python-iocextract
+stegosuite,https://github.com/osde8info/stegosuite
+oletools,https://github.com/decalage2/oletools
+pefile,https://github.com/erocarrera/pefile
+Density Scout,https://cert.at/en/downloads/software/software-densityscout
+clamav,https://www.clamav.net
+ffmpeg,https://github.com/ffmpeg
+lf,https://github.com/gokcehan/lf
+jq,https://stedolan.github.io/jq/
+yara,https://github.com/VirusTotal/yara
+python3-impacket,https://github.com/SecureAuthCorp/impacket
+hashcat,https://github.com/hashcat
+python-evtx,python-registry,https://github.com/williballenthin/
+python3-libesedb,https://github.com/libyal
+libesedb-utils,https://github.com/libyal
+liblnk-utils,https://github.com/libyal
+libevtx-utils,https://github.com/libyal
+libewf-dev,https://github.com/libyal
+ewf-tools/libewf-tools,https://github.com/libyal
+libbde-utils/tools,https://github.com/libyal
+libvshadow-utils/tools,https://github.com/libyal
+pff-tools,https://github.com/libyal
+libscca-python,https://github.com/libyal
+liblnk-python,https://github.com/libyal
+libfwsi-python,https://github.com/libyal
+p7zip-full,https://www.7-zip.org
 
 # Yara Rules (fetch using get-yara-rules.sh)
-Nextron, ReversingLabs, yararules.com
+https://github.com/Neo23x0/signature-base
+https://github.com/bartblaze/Yara-rules
+https://github.com/Yara-Rules
+https://github.com/reversinglabs/reversinglabs-yara-rules
+##############################################################################################
 
-# Directories created
-  /mnt/raw
-  /mnt/image_mount
-  /mnt/vss
-  /mnt/shadow
-  /mnt/bde
-  /mnt/smb
-  /cases
-
-
+"
 ////
 
 function display_usage(){
@@ -63,7 +199,7 @@ function display_usage(){
   install-forensic-tools.sh
   Downloads forensic tools to /usr/local/src
   fullfills requirements for running siftgrab
-  Tested on Ubuntu 18.04, 20.04, Kali 20221 and WSL (Ubuntu 20.04)
+  Tested on Ubuntu 18.04, 20.04, 22.04 Kali and WSL
 
   USAGE: install-forensic-tools.sh -h
 
@@ -135,7 +271,7 @@ function main_install(){
   
   
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip rar unrar p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -207,7 +343,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/volatility/ 2>/dev/null)" ] && \
   git -C /usr/local/src/volatility pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility
-  chmod 755  /usr/local/src/volatility/*.py
+  pip install -qr /usr/local/src/volatility/requirements.txt
 
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
@@ -253,6 +389,17 @@ function main_install(){
   git -C /usr/local/src/srum-dump || \
   git clone https://github.com/MarkBaggett/srum-dump.git /usr/local/src/srum-dump
   pip install -qr /usr/local/src/srum-dump/requirements.txt
+  
+    #Git JL_Parser
+  [ "$(ls -A /usr/local/src/JumpList_Lnk_Parser)" ] && \
+  git -C /usr/local/src/JumpList_Lnk_Parser || \
+  git clone https://github.com/salehmuhaysin/JumpList_Lnk_Parser.git /usr/local/src/JumpList_Lnk_Parser
+  
+     #Git Zircolite
+  [ "$(ls -A /usr/local/src/Zircolite)" ] && \
+  git -C /usr/local/src/Zircolite || \
+  git clone https://github.com/wagga40/Zircolite.git /usr/local/src/Zircolite
+  pip install -r /usr/local/src/Zircolite/requirements.txt
 
     #Git EventTranscriptParser
   [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
@@ -263,6 +410,12 @@ function main_install(){
   [ "$(ls -A /usr/local/src/ntdsxtract)" ] && \
   git -C /usr/local/src/ntdsxtract || \
   git clone https://github.com/csababarta/ntdsxtract.git /usr/local/src/ntdsxtract
+
+     #Git RegistryFlush
+  [ "$(ls -A /usr/local/src/Silv3rHorn)" ] && \
+  git -C /usr/local/src/Silv3rhorn || \
+  git clone https://github.com/dfir-scripts/4n6_misc.git /usr/local/src/Silv3rhorn
+
 
   # Use Wget and curl to download tools
 #Download mft_dump
@@ -303,7 +456,7 @@ function main_install(){
 
   # Download ftkimager
   which ftkimager || \
-  wget  https://ad-zip.s3.amazonaws.com/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
+  wget  https://d1kpmuwb7gvu1i.cloudfront.net/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
 
@@ -344,7 +497,7 @@ function main_install(){
   /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh
 
   #Create a symbolic link to /opt/share
-  [ -d "/opt/share" ] || ln -s /usr/local/src/ /opt/share
+  [ -d "/opt/app" ] || ln -s /usr/local/src/ /opt/app
 }
 
 function add_gui_tools(){
@@ -365,12 +518,6 @@ function add_gui_tools(){
   wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb 
   [ "$(ls /tmp/RLinux5_x64.deb)" ] && dpkg -i /tmp/RLinux5_x64.deb
   which rlinux || pause
-
-  #Git LogFileParser
-  [ "$(ls -A /usr/local/src/LogFileParser/)" ] && \
-  git -C /usr/local/src/LogFileParser pull --no-rebase 2>/dev/null || \
-  git clone https://github.com/jschicht/LogFileParser.git /usr/local/src/LogFileParser
-
 
   #Get CyberChef
   mkdir -p /usr/local/src/CyberChef
