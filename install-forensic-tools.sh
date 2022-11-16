@@ -219,7 +219,7 @@ function install_gift_ppa(){
   add-apt-repository ppa:gift/stable -y &&  apt update || pause
   apt upgrade -q -y -u  || pause
   cat /etc/issue|grep -Ei "u 20"\|"u 18" && \
-  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor  exfat-utils -y
+  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor -y
 }
 
 function main_install(){
@@ -271,7 +271,7 @@ function main_install(){
   
   
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket"
+  sift_apt_pkgs="fdupes sleuthkit attr libsnappy-dev dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket"
 
   for apt_pkg in $sift_apt_pkgs;
   do
