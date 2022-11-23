@@ -224,7 +224,7 @@ function install_gift_ppa(){
 
 function main_install(){
   apt remove libewf2 -y
-  apt install git curl net-tools vim -y
+  apt install git curl net-tools vim fdisk -y
   cat /etc/issue|grep -E "u 2"\|"u 18" && install_gift_ppa
 
   cat /etc/issue|grep -i kali && \
