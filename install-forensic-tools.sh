@@ -387,7 +387,7 @@ function main_install(){
   #Git Srum-Dump
   [ "$(ls -A /usr/local/src/srum-dump)" ] && \
   git -C /usr/local/src/srum-dump || \
-  git clone https://github.com/MarkBaggett/srum-dump.git /usr/local/src/srum-dump
+  git clone https://github.com/dfir-scripts/srum-dump.git /usr/local/src/srum-dump
   pip install -qr /usr/local/src/srum-dump/requirements.txt
   
     #Git JL_Parser
