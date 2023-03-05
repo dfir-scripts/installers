@@ -126,7 +126,6 @@ Guymager,https://guymager.sourceforge.io/
 ddrescue,https://www.gnu.org/software/ddrescue/
 photorec/testdisk,https://www.cgsecurity.org/
 Foremost,http://foremost.sourceforge.net/
-R-Linux,https://www.r-studio.com/free-linux-recovery-help/
 dc3dd,https://sourceforge.net/projects/dc3dd/
 afro,https://github.com/cugu/
 xmount,https://www.pinguin.lu/xmount
@@ -246,7 +245,7 @@ function main_install(){
   pip3 -V || pause
 
   #pip installs
-  sift_pip_pkgs="python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser"
+  sift_pip_pkgs="python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser python-snappy"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -271,7 +270,7 @@ function main_install(){
   
   
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr libsnappy-dev dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket"
+  sift_apt_pkgs="fdupes sleuthkit attr libsnappy-dev dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -343,7 +342,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/volatility/ 2>/dev/null)" ] && \
   git -C /usr/local/src/volatility pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility
-  pip install -qr /usr/local/src/volatility/requirements.txt
+  pip3 install -qr /usr/local/src/volatility/requirements.txt
 
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
@@ -388,7 +387,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/srum-dump)" ] && \
   git -C /usr/local/src/srum-dump || \
   git clone https://github.com/dfir-scripts/srum-dump.git /usr/local/src/srum-dump
-  pip install -qr /usr/local/src/srum-dump/requirements.txt
+  pip3 install -qr /usr/local/src/srum-dump/requirements.txt
   
     #Git JL_Parser
   [ "$(ls -A /usr/local/src/JumpList_Lnk_Parser)" ] && \
@@ -399,7 +398,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/Zircolite)" ] && \
   git -C /usr/local/src/Zircolite || \
   git clone https://github.com/wagga40/Zircolite.git /usr/local/src/Zircolite
-  pip install -r /usr/local/src/Zircolite/requirements.txt
+  pip3 install -r /usr/local/src/Zircolite/requirements.txt
 
     #Git EventTranscriptParser
   [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
@@ -459,7 +458,12 @@ function main_install(){
   wget  https://d1kpmuwb7gvu1i.cloudfront.net/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
+  
 
+# Download lolbas.csv
+  mkdir -p /usr/local/src/lolbas
+  wget -O /usr/local/src/lolbas/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv | \
+  
   #Install chainsaw
   git_release="https://github.com/countercept/chainsaw/releases"
   git_download="https://github.com/countercept/chainsaw/releases/download/"
@@ -513,11 +517,6 @@ function add_gui_tools(){
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
-  # Install R-Linux
-  which rlinux || \
-  wget -O /tmp/RLinux5_x64.deb  https://www.r-studio.com/downloads/RLinux5_x64.deb 
-  [ "$(ls /tmp/RLinux5_x64.deb)" ] && dpkg -i /tmp/RLinux5_x64.deb
-  which rlinux || pause
 
   #Get CyberChef
   mkdir -p /usr/local/src/CyberChef
