@@ -3,13 +3,10 @@
 << ////
 This script installs open source forensic and disk tools and scripts on Debian based systems.
 
-The install creates an automated environment for running multiple open source forensic tools at once to examine Windows systems in a Linux evnironment.
-Tested on Ubuntu 20.04, Kali 2022.1, Windows WSL2 Ubuntu and SANS SiFT
-
 
 ##############################################################################################
 siftgrab is an automated environment for running multiple open source forensic tools at once to examine Windows systems in a Linux evnironment.
-Tested on Ubuntu, Kali, Windows WSL2 Ubuntu and SANS SiFT
+Tested on Ubuntu, Kali, Windows WSL2 Ubuntu
 
 
 Work flow
@@ -27,7 +24,7 @@ Work flow
        /mnt/bde
        /mnt/smb
        /cases
-......./opt/app/<open source tools directories>
+       /opt/app/<open source tools directories>
 
   To access the siftgrab menu simply type: sudo siftgrab
 
@@ -69,6 +66,7 @@ Artifact,Tool,Source
 usnjrln,usnparser,https://github.com/PoorBillionaire/USN-Journal-Parser
 MFT,analyzeMFT,https://github.com/dkovar/analyzeMFT
 MFT,mft_dump,https://github.com/omerbenamram/mft
+INDX,INDXRipper,https://github.com/harelsegev/INDXRipper
 Registry,Regripper,https://github.com/keydet89/RegRipper3.0
 Registry,Yarp,https://github.com/msuhanov/yarp
 Registry,registryFlush,https://github.com/Silv3rHorn/4n6_misc
@@ -89,6 +87,7 @@ index.dat,parseie,https://github.com/keydet89/Tools
 AlternateDataStreams,dfir-script,https://github.com/dfir-scripts/
 Windows Event Logs,evtx_dump,https://github.com/omerbenamram/evtx
 Windows Event Logs,Zircolite,https://github.com/wagga40/Zircolite
+Windows Event Logs,Hayabusa,https://github.com/Yamato-Security/hayabusa/
 Windows Event Logs,dfir-script,https://github.com/dfir-scripts/WinEventLogs
 
 
@@ -130,7 +129,7 @@ dc3dd,https://sourceforge.net/projects/dc3dd/
 afro,https://github.com/cugu/
 xmount,https://www.pinguin.lu/xmount
 afflib-tools,http://www.afflib.org/
-exfat-utils,https://github.com/relan/exfat
+exfatprogs,https://launchpad.net/ubuntu/+source/exfatprogs
 qemu-utils,https://www.qemu.org/download/
 ifuse,https://github.com/libimobiledevice/ifuse
 gparted,https://gparted.org/
@@ -142,21 +141,16 @@ jobparser,https://github.com/gleeda
 bits_parser,https://github.com/ANSSI-FR/bits_parser
 Hindsight,https://github.com/obsidianforensics/hindsight
 INDXParse.py,https://github.com/williballenthin/INDXParse
-chainsaw,https://github.com/countercept/chainsaw/
-clamtk,https://github.com/dave-theunsub/clamtk
 feh,https://feh.finalrewind.org/
 eog,https://help.gnome.org/users/eog/stable/
-glogg,https://github.com/nickbnf/glogg
 CyberChef,https://github.com/gchq/CyberChef
 binwalk,https://github.com/ReFirmLabs/binwalk
 graphviz,https://graphviz.org/
 geoip-database,https://www.maxmind.com
 Volatility3,https://github.com/volatilityfoundation/
-NTDSExtract,https://github.com/csababarta/ntdsxtract
 Didier Stevens Suite,https://blog.didierstevens.com/didier-stevens-suite/
 DEXRAY,https://www.hexacorn.com/products_and_freebies.html
 iocextract,https://github.com/InQuest/python-iocextract
-stegosuite,https://github.com/osde8info/stegosuite
 oletools,https://github.com/decalage2/oletools
 pefile,https://github.com/erocarrera/pefile
 Density Scout,https://cert.at/en/downloads/software/software-densityscout
@@ -217,23 +211,23 @@ function install_gift_ppa(){
   apt install software-properties-common -y && \
   add-apt-repository ppa:gift/stable -y &&  apt update || pause
   apt upgrade -q -y -u  || pause
-  cat /etc/issue|grep -Ei "u 20"\|"u 18" && \
-  apt install libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor -y
+  cat /etc/issue|grep -Ei "u 2"\|"u 18" && \
+  apt install libscca libewf-tools libbde-tools libvshadow-tools libesedb-tools liblnk-tools libevtx-tools plaso-tools bulk-extractor -y
 }
 
 function main_install(){
   apt remove libewf2 -y
   apt install git curl net-tools vim fdisk -y
-  cat /etc/issue|grep -E "u 2"\|"u 18" && install_gift_ppa
+  cat /etc/issue|grep -Ei "u 2"\|"u 18" && install_gift_ppa
 
   cat /etc/issue|grep -i kali && \
-  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils cifs-utils python3-libesedb plaso -y
+  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-llfuse cifs-utils python3-libesedb plaso -y
 
-  #Set python3 as python and Install pip and pip3
+  #Set python3 as python and install pip3
   echo "Requires python2 for legacy scripts"
   echo "Assume python3 or fail"
   which python3 || pause
-  which python2 || apt install python2 -y 
+  which python2 || apt install python2 -y
 
   ############### Forensic Tools Download, Install and Confiuration ##########################
   #Make Disk Mount and Cases Directories
@@ -241,66 +235,69 @@ function main_install(){
   mkdir -p /cases
 
   #Install pip3
-  pip3 -V 2>/dev/null || apt install python3-pip -y
+  apt install python3-pip virtualenv -y
   pip3 -V || pause
+  mkdir -p /envs
+  cd /envs
+  virtualenv -p python3 dfir --system-site-packages
+  source dfir/bin/activate
 
   #pip installs
-  sift_pip_pkgs="python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser python-snappy"
+  sift_pip_pkgs="python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser pandas construct"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
-  
+
   #Install yarp
   git_release="https://github.com/msuhanov/yarp/releases/"
   git_download="https://github.com/msuhanov/yarp/archive"
   latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
   pip3 install $install_dir $git_download/$latest_ver.tar.gz
-  
+
   #Install dfir_ntfs
   git_release="https://github.com/msuhanov/dfir_ntfs/releases/"
   git_download="https://github.com/msuhanov/dfir_ntfs/archive"
   latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
-  pip3 install $install_dir $git_download/$latest_ver.tar.gz  
-  
-  #Install MemProcFS
-  mkdir -p /usr/local/src/MemProcFS
-  latest_MemProcFS=$(curl -s https://github.com/ufrisk/MemProcFS/releases/|grep -m 1 linux_x64|awk -F'"' '{print $2}')
-  wget https://github.com$latest_MemProcFS -O - | tar -xzvf - -C /usr/local/src/MemProcFS
-  
-  
+  pip3 install $install_dir $git_download/$latest_ver.tar.gz
+
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr libsnappy-dev dcfldd afflib-tools autopsy qemu-utils lvm2 kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar stegosuite hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev"
 
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
-    sudo apt install $apt_pkg -y
+    apt install $apt_pkg -y
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
   #Git and configure Package Installations and Updates
-
   #Git analyzeMFT
   [ "$(ls -A /usr/local/src/analyzeMFT/ 2>/dev/null)" ] && \
+  cd /usr/local/src/analyzeMFT
   git -C /usr/local/src/analyzeMFT pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/dkovar/analyzeMFT.git /usr/local/src/analyzeMFT
   [ "$(ls -A /usr/local/src/analyzeMFT/)" ] || pause
   cd /usr/local/src/analyzeMFT/
-  python setup.py install || pause
+  python3 setup.py install || pause
+
+  #Git BitsParser
+  [ "$(ls -A /usr/local/src/BitsParser)" ] && \
+  git -C /usr/local/src/BitsParser || \
+  git clone https://github.com/fireeye/BitsParser.git /usr/local/src/BitsParser
 
   #Git DFIR-Script shell scripts
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/shellscripts pull --no-rebase 2>/dev/null || \
   git clone https://github.com/dfir-scripts/shellscripts.git /usr/local/src/dfir-scripts/shellscripts
   [ "$(ls -A /usr/local/src/dfir-scripts/shellscripts)" ] && chmod 755 /usr/local/src/dfir-scripts/shellscripts/* || pause
-  
+
     #Git DFIR-Scripts Eventlog parsers
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/WinEventLogs pull --no-rebase 2>/dev/null || \
   git clone https://github.com/dfir-scripts/WinEventLogs.git /usr/local/src/dfir-scripts/WinEventLogs
   [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/WinEventLogs* || pause
-  
+
      #Git DFIR-Scripts Installer
   [ "$(ls -A /usr/local/src/dfir-scripts/ 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/installers pull --no-rebase 2>/dev/null || \
@@ -327,7 +324,7 @@ function main_install(){
    git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
    mkdir /usr/local/src/Hindsight/requirements
    cd /usr/local/src/Hindsight/requirements
-   pip3 download -r /usr/local/src/Hindsight/requirements.txt
+   pip3 install -r /usr/local/src/Hindsight/requirements.txt
    cd /usr/local/src
 
 
@@ -368,66 +365,42 @@ function main_install(){
   git -C /usr/local/src/sqlite_miner pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/threeplanetssoftware/sqlite_miner.git /usr/local/src/sqlite_miner
 
-  #Git Afro
-  [ "$(ls -A /usr/local/src/cugu/afro )" ] && \
-  git -C /usr/local/src/cugu/afro || \
-  git clone https://github.com/cugu/afro.git /usr/local/src/cugu/afro
-
   #Git Kstrike
   [ "$(ls -A /usr/local/src/KStrike)" ] && \
-  git -C /usr/local/src/KStrike || \
+  git -C /usr/local/src/KStrike pull --no-rebase 2>/dev/null|| \
   git clone https://github.com/brimorlabs/KStrike.git /usr/local/src/KStrike
-
-  #Git BitsParser
-  [ "$(ls -A /usr/local/src/BitsParser)" ] && \
-  git -C /usr/local/src/BitsParser || \
-  git clone https://github.com/fireeye/BitsParser.git /usr/local/src/BitsParser
 
   #Git Srum-Dump
   [ "$(ls -A /usr/local/src/srum-dump)" ] && \
-  git -C /usr/local/src/srum-dump || \
+  git -C /usr/local/src/srum-dump --no-rebase 2>/dev/null|| \
   git clone https://github.com/dfir-scripts/srum-dump.git /usr/local/src/srum-dump
   pip3 install -qr /usr/local/src/srum-dump/requirements.txt
-  
-    #Git JL_Parser
+
+  #Git JL_Parser
   [ "$(ls -A /usr/local/src/JumpList_Lnk_Parser)" ] && \
-  git -C /usr/local/src/JumpList_Lnk_Parser || \
+  git -C /usr/local/src/JumpList_Lnk_Parser --no-rebase 2>/dev/null || \
   git clone https://github.com/salehmuhaysin/JumpList_Lnk_Parser.git /usr/local/src/JumpList_Lnk_Parser
-  
-     #Git Zircolite
+
+  #Git Zircolite
   [ "$(ls -A /usr/local/src/Zircolite)" ] && \
-  git -C /usr/local/src/Zircolite || \
+  git -C /usr/local/src/Zircolite --no-rebase 2>/dev/null || \
   git clone https://github.com/wagga40/Zircolite.git /usr/local/src/Zircolite
   pip3 install -r /usr/local/src/Zircolite/requirements.txt
 
-    #Git EventTranscriptParser
+  #Git EventTranscriptParser
   [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
-  git -C /usr/local/src/EventTranscriptParser || \
+  git -C /usr/local/src/EventTranscriptParser --no-rebase 2>/dev/null || \
   git clone https://github.com/stuxnet999/EventTranscriptParser.git /usr/local/src/EventTranscriptParser
 
-     #Git ntdsxtract
-  [ "$(ls -A /usr/local/src/ntdsxtract)" ] && \
-  git -C /usr/local/src/ntdsxtract || \
-  git clone https://github.com/csababarta/ntdsxtract.git /usr/local/src/ntdsxtract
-
-     #Git RegistryFlush
+  #Git RegistryFlush
   [ "$(ls -A /usr/local/src/Silv3rHorn)" ] && \
-  git -C /usr/local/src/Silv3rhorn || \
+  git -C /usr/local/src/Silv3rhorn --no-rebase 2>/dev/null || \
   git clone https://github.com/dfir-scripts/4n6_misc.git /usr/local/src/Silv3rhorn
 
-
-  # Use Wget and curl to download tools
-#Download mft_dump
-  mkdir -p /usr/local/src/omerbenamram/mft_dump/
-  git_release="https://api.github.com/repos/omerbenamram/mft/releases/latest"
-  install_dir="/usr/local/src/omerbenamram/mft_dump"
-  current_ver=$($install_dir/mft_dump -V 2>/dev/null|sed 's/.* /v/')
-  latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
-  [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
-  [ $updated_status ] || curl -s $git_release | \
-  grep -E 'browser_download_url.*64-unknown-linux-musl'| \
-  awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
-  chmod 755 $install_dir/mft_dump && cp $install_dir/mft_dump /usr/local/bin/mft_dump || pause
+  #Git INDXRipper
+  [ "$(ls -A /usr/local/src/INDXRipper)" ] && \
+  git -C /usr/local/src/INDXRipper --no-rebase 2>/dev/null || \
+  git clone https://github.com/harelsegev/INDXRipper.git /usr/local/src/INDXRipper
 
   #Download evtx_dump
   mkdir -p /usr/local/src/omerbenamram/evtx_dump/
@@ -440,36 +413,53 @@ function main_install(){
   grep -E 'browser_download_url.*64-unknown-linux-musl'| \
   awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/evtx_dump/evtx_dump "$4) }'  && \
   chmod 755 $install_dir/evtx_dump && cp $install_dir/evtx_dump /usr/local/bin/evtx_dump || pause
-   
-  #Download lf File Browser
+
+
+  # Use Wget and curl to download tools
+  #Download mft_dump
+  mkdir -p /usr/local/src/omerbenamram/mft_dump/
+  git_release="https://api.github.com/repos/omerbenamram/mft/releases/latest"
+  install_dir="/usr/local/src/omerbenamram/mft_dump"
+  current_ver=$($install_dir/mft_dump -V 2>/dev/null|sed 's/.* /v/')
+  latest_ver=$(curl -s "$git_release" | grep -Po '"tag_name": "\K.*?(?=")')
+  [ $current_ver ] && updated_status=$(echo -e "$current_ver\n$latest_ver" |sort -V |grep -m 1 $current_ver )
+  [ $updated_status ] || curl -s $git_release | \
+  grep -E 'browser_download_url.*64-unknown-linux-musl'| \
+  awk -F'"' '{system("wget -O /usr/local/src/omerbenamram/mft_dump/mft_dump "$4) }'  && \
+  chmod 755 $install_dir/mft_dump && cp $install_dir/mft_dump /usr/local/bin/mft_dump || pause
+
+  #Download Haybusa
+  mkdir -p /usr/local/src/Hayabusa
+  cd /usr/local/src/Hayabusa
+  current_ver=$(hayabusa help|head -n 1|awk '{print $2}' 2>/dev/null)
+  latest_ver=$(curl -s https://github.com/Yamato-Security/hayabusa/ |grep -Po "(?<=tag/v)[^\">]+")
+  [ $current_ver == $latest_ver] && echo "already updated" || \
+  wget -qO - https://github.com/Yamato-Security/hayabusa/releases/download/v$latest_ver/hayabusa-$latest_ver-all-platforms.zip| busybox unzip -
+  cp hayabusa-*-lin-musl /usr/local/bin/hayabusa 2>/dev/null
+  chmod 755 /usr/local/bin/hayabusa
+
+#Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
   grep browser_download_url | grep lf-linux-amd64.tar.gz | \
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
   tar -xvf /tmp/lf-linux*.gz -C /tmp
-  chmod 755 /tmp/lf && cp /tmp/lf /usr/local/bin/lf || pause
+  chmod 755 /tmp/lf && mv /tmp/lf /usr/local/bin/lf || pause
 
   # Download Density Scout
-  wget -O /tmp/densityscout_build_45_linux.zip https://cert.at/media/files/downloads/software/densityscout/files/densityscout_build_45_linux.zip || pause
-  unzip -o /tmp/densityscout_build_45_linux.zip -d /tmp/densityscout/
-  chmod 755 /tmp/densityscout/lin64/densityscout && cp /tmp/densityscout/lin64/densityscout /usr/local/bin/
+  wget -qO - https://cert.at/media/files/downloads/software/densityscout/files/densityscout_build_45_linux.zip| \
+  busybox unzip -j - lin64/densityscout -d /usr/local/src/dfir-scripts/ && \
+  mv /usr/local/src/dfir-scripts/densityscout /usr/local/bin/densityscout && \
+  chmod 755 /usr/local/bin/densityscout
 
   # Download ftkimager
   which ftkimager || \
   wget  https://d1kpmuwb7gvu1i.cloudfront.net/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
-  
 
-# Download lolbas.csv
+  # Download lolbas.csv
   mkdir -p /usr/local/src/lolbas
   wget -O /usr/local/src/lolbas/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv | \
-  
-  #Install chainsaw
-  git_release="https://github.com/countercept/chainsaw/releases"
-  git_download="https://github.com/countercept/chainsaw/releases/download/"
-  latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
-  wget $git_download/$latest_ver/chainsaw_x86_64-unknown-linux-musl.tar.gz -O - | tar -xzvf - -C /usr/local/src
-
 
   #Download and configure DeXRAY
   which DeXRAY.pl || \
@@ -483,7 +473,6 @@ function main_install(){
   cpanm OLE::Storage_Lite
 
   # Get Job Parser
-
   wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
 
@@ -502,18 +491,19 @@ function main_install(){
 
   #Create a symbolic link to /opt/share
   [ -d "/opt/app" ] || ln -s /usr/local/src/ /opt/app
+  deactivate
 }
 
 function add_gui_tools(){
   # Extended Tools Install
   #Install tools from apt
   uname -a |grep -i microsoft && exit
-  gui_aptpkgs="gparted feh eog glogg binwalk clamtk gridsite-clients graphviz guymager"
+  gui_aptpkgs="gparted feh eog binwalk gridsite-clients graphviz guymager"
 
   for apt_pkg in $gui_aptpkgs;
   do
     echo "Installing $apt_pkg"
-    sudo apt install $apt_pkg -y
+    apt install $apt_pkg -y
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
