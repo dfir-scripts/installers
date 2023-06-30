@@ -253,13 +253,13 @@ function main_install(){
   git_release="https://github.com/msuhanov/yarp/releases/"
   git_download="https://github.com/msuhanov/yarp/archive"
   latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
-  pip3 install $install_dir $git_download/$latest_ver.tar.gz
+  pip3 install $git_download/$latest_ver.tar.gz
 
   #Install dfir_ntfs
   git_release="https://github.com/msuhanov/dfir_ntfs/releases/"
   git_download="https://github.com/msuhanov/dfir_ntfs/archive"
   latest_ver=$(curl -s "$git_release" |grep -Po -m 1 '(?<=tag/).*(?=" data)')
-  pip3 install $install_dir $git_download/$latest_ver.tar.gz
+  pip3 install $git_download/$latest_ver.tar.gz
 
   #Install Applications from Apt
   sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev"
@@ -397,6 +397,11 @@ function main_install(){
   git -C /usr/local/src/Silv3rhorn --no-rebase 2>/dev/null || \
   git clone https://github.com/dfir-scripts/4n6_misc.git /usr/local/src/Silv3rhorn
 
+  #Git Python-Registry
+  [ "$(ls -A /usr/local/src/Python-Registry)" ] && \
+  git -C /usr/local/src/Python-Registry --no-rebase 2>/dev/null || \
+  git clone https://github.com/williballenthin/python-registry.git /usr/local/src/Python-Registry
+  
   #Git INDXRipper
   [ "$(ls -A /usr/local/src/INDXRipper)" ] && \
   git -C /usr/local/src/INDXRipper --no-rebase 2>/dev/null || \
@@ -431,9 +436,9 @@ function main_install(){
   #Download Haybusa
   mkdir -p /usr/local/src/Hayabusa
   cd /usr/local/src/Hayabusa
-  current_ver=$(hayabusa help|head -n 1|awk '{print $2}' 2>/dev/null)
+  current_ver=$(hayabusa help 2>/dev/null |head -n 1|awk '{print $2}' 2>/dev/null)
   latest_ver=$(curl -s https://github.com/Yamato-Security/hayabusa/ |grep -Po "(?<=tag/v)[^\">]+")
-  [ $current_ver == $latest_ver] && echo "already updated" || \
+  [ $current_ver == $latest_ver ] && echo "already updated" || \
   wget -qO - https://github.com/Yamato-Security/hayabusa/releases/download/v$latest_ver/hayabusa-$latest_ver-all-platforms.zip| busybox unzip -
   cp hayabusa-*-lin-musl /usr/local/bin/hayabusa 2>/dev/null
   chmod 755 /usr/local/bin/hayabusa
@@ -481,7 +486,7 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/siftgrab/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause
   wget -O /usr/local/src/dfir-scripts/ermount/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
   wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
-  wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause 
+  wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
@@ -498,7 +503,7 @@ function add_gui_tools(){
   # Extended Tools Install
   #Install tools from apt
   uname -a |grep -i microsoft && exit
-  gui_aptpkgs="gparted feh eog binwalk gridsite-clients graphviz guymager"
+  gui_aptpkgs="gparted feh eog binwalk gridsite-clients graphviz"
 
   for apt_pkg in $gui_aptpkgs;
   do
