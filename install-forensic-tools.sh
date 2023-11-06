@@ -243,7 +243,7 @@ function main_install(){
   source dfir/bin/activate
 
   #pip installs
-  sift_pip_pkgs="python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser pandas construct"
+  sift_pip_pkgs="regipy[full] setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser pandas construct"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -272,7 +272,7 @@ function main_install(){
   done
 
   #Git and configure Package Installations and Updates
-  #Git analyzeMFT
+  Git analyzeMFT
   [ "$(ls -A /usr/local/src/analyzeMFT/ 2>/dev/null)" ] && \
   cd /usr/local/src/analyzeMFT
   git -C /usr/local/src/analyzeMFT pull --no-rebase 2>/dev/null|| \
@@ -304,19 +304,6 @@ function main_install(){
   git clone https://github.com/dfir-scripts/installers.git /usr/local/src/dfir-scripts/installers
   [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/installers || pause
 
-
-  #Git and configure Harlan Carvey tools
-  [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
-  git -C /usr/local/src/keydet89/tools/ pull --no-rebase 2>/dev/null || \
-  git clone https://github.com/keydet89/Tools.git /usr/local/src/keydet89/tools/
-  chmod 755 /usr/local/src/keydet89/tools/source/* || pause
-  #set Windows Perl scripts in Keydet89/Tools/source
-  find /usr/local/src/keydet89/tools/source -type f 2>/dev/null|grep pl$ | while read d;
-  do
-    file_name=$( echo "$d"|sed 's/\/$//'|awk -F"/" '{print $(NF)}')
-    sed -i '/^#! c:[\]perl[\]bin[\]perl.exe/d' $d && sed -i "1i #!`which perl`" $d
-    cp $d /usr/local/bin/$file_name || pause
-  done
 
    #Git Hindsight
    [ "$(ls -A /usr/local/src/Hindsight/)" ] && \
@@ -406,6 +393,12 @@ function main_install(){
   [ "$(ls -A /usr/local/src/INDXRipper)" ] && \
   git -C /usr/local/src/INDXRipper --no-rebase 2>/dev/null || \
   git clone https://github.com/harelsegev/INDXRipper.git /usr/local/src/INDXRipper
+  
+  #Git and configure Harlan Carvey tools
+  [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/keydet89/tools/ pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/keydet89/Tools.git /usr/local/src/keydet89/tools/
+  chmod 755 /usr/local/src/keydet89/tools/source/* || pause
 
   #Download evtx_dump
   mkdir -p /usr/local/src/omerbenamram/evtx_dump/
@@ -464,7 +457,13 @@ function main_install(){
 
   # Download lolbas.csv
   mkdir -p /usr/local/src/lolbas
-  wget -O /usr/local/src/lolbas/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv | \
+  wget -O /usr/local/src/lolbas/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv 
+
+  # Download Jumplist APPIDs
+  mkdir -p /usr/local/src/EricZimmerman
+  wget -O /usr/local/src/EricZimmerman/AppIDs.txt https://raw.githubusercontent.com/EricZimmerman/JumpList/master/JumpList/Resources/AppIDs.txt
+  # Convert AppIDs to csv for JLParser
+  cat /usr/local/src/EricZimmerman/AppIDs.txt | awk -F'"' '{print "Application IDs,"tolower($2)","$4}' >> /usr/local/src/EricZimmerman/AppIDs.csv
 
   #Download and configure DeXRAY
   which DeXRAY.pl || \
@@ -496,6 +495,14 @@ function main_install(){
 
   #Create a symbolic link to /opt/share
   [ -d "/opt/app" ] || ln -s /usr/local/src/ /opt/app
+  #set Windows Perl scripts in Keydet89/Tools/source
+  find /usr/local/src/keydet89/tools/source -type f 2>/dev/null|grep pl$ | while read d;
+  do
+    a=$(which perl)
+    file_name=$( echo "$d"|sed 's/\/$//'|awk -F"/" '{print $(NF)}')
+    sed -i '/^#! c:[\]perl[\]bin[\]perl.exe/d' $d && sed -i "1i #!$a" $d
+    cp $d /usr/local/bin/$file_name || pause
+  done
   deactivate
 }
 
@@ -512,12 +519,13 @@ function add_gui_tools(){
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
 
-
   #Get CyberChef
   mkdir -p /usr/local/src/CyberChef
   curl -s https://api.github.com/repos/gchq/CyberChef/releases/latest |\
   grep -E 'browser_download_url'|awk -F'"' '{system("wget -P /tmp "$4) }' && \
   unzip -o /tmp/Cyber*.zip -d /usr/local/src/CyberChef
+  
+
 }
 
 [ $(whoami) != "root" ] && echo "Requires Root!" && exit
