@@ -243,7 +243,7 @@ function main_install(){
   source dfir/bin/activate
 
   #pip installs
-  sift_pip_pkgs="regipy[full] setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser pandas construct"
+  sift_pip_pkgs="pyarrow setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools bits_parser pandas construct"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -262,7 +262,7 @@ function main_install(){
   pip3 install $git_download/$latest_ver.tar.gz
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev gnumeric xxd"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev gnumeric xxd reglookup"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -454,6 +454,12 @@ function main_install(){
   wget  https://d1kpmuwb7gvu1i.cloudfront.net/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
+  
+  # Download Volatility 2.6
+  mkdir -p /usr/local/src/volatility2.6
+  wget -qO - http://downloads.volatilityfoundation.org/releases/2.6/volatility-2.6.zip | \
+  busybox unzip - -d /usr/local/src/volatility2.6/
+
 
   # Download lolbas.csv
   mkdir -p /usr/local/src/lolbas
