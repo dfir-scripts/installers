@@ -262,7 +262,7 @@ function main_install(){
   pip3 install $git_download/$latest_ver.tar.gz
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev gnumeric xxd reglookup"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate python3-impacket libsnappy-dev gnumeric xxd reglookup fuse libfuse3-dev bzip2 libbz2-dev cmake libattr1-dev zlib1g-dev"
 
   for apt_pkg in $sift_apt_pkgs;
   do
@@ -399,6 +399,19 @@ function main_install(){
   git -C /usr/local/src/keydet89/tools/ pull --no-rebase 2>/dev/null || \
   git clone https://github.com/keydet89/Tools.git /usr/local/src/keydet89/tools/
   chmod 755 /usr/local/src/keydet89/tools/source/* || pause
+  
+  #Git and configure apfs-fuse
+  [ "$(ls -A /usr/local/src/apfs-fuse/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/apfs-fuse/ pull --no-rebase 2>/dev/null || \
+  git clone https://github.com/sgan81/apfs-fuse.git /usr/local/src/apfs-fuse/
+  cd /usr/local/src/apfs-fuse/
+  git submodule init
+  git submodule update
+  mkdir build
+  cd build
+  cmake ..
+  make
+  cp /usr/local/src/apfs-fuse/build/apfs-* /usr/local/bin/
 
   #Download evtx_dump
   mkdir -p /usr/local/src/omerbenamram/evtx_dump/
@@ -433,7 +446,7 @@ function main_install(){
   latest_ver=$(curl -s https://github.com/Yamato-Security/hayabusa/ |grep -Po "(?<=tag/v)[^\">]+")
   [ $current_ver == $latest_ver ] && echo "already updated" || \
   wget -qO - https://github.com/Yamato-Security/hayabusa/releases/download/v$latest_ver/hayabusa-$latest_ver-all-platforms.zip| busybox unzip -
-  cp hayabusa-*-lin-musl /usr/local/bin/hayabusa 2>/dev/null
+  cp hayabusa-*-lin-x64-musl /usr/local/bin/hayabusa 2>/dev/null
   chmod 755 /usr/local/bin/hayabusa
 
 #Download lf File Browser
@@ -459,7 +472,6 @@ function main_install(){
   mkdir -p /usr/local/src/volatility2.6
   wget -qO - http://downloads.volatilityfoundation.org/releases/2.6/volatility-2.6.zip | \
   busybox unzip - -d /usr/local/src/volatility2.6/
-
 
   # Download lolbas.csv
   mkdir -p /usr/local/src/lolbas
