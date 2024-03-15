@@ -221,7 +221,7 @@ function main_install(){
   cat /etc/issue|grep -Ei "u 2"\|"u 18" && install_gift_ppa
 
   cat /etc/issue|grep -i kali && \
-  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-llfuse cifs-utils python3-libesedb plaso -y
+  apt install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils cifs-utils python3-libesedb plaso -y
 
   #Set python3 as python and install pip3
   echo "Requires python2 for legacy scripts"
