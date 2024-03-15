@@ -235,7 +235,7 @@ function main_install(){
   mkdir -p /cases
 
   #Install pip3
-  apt install python3-pip virtualenv -y
+  apt install python3-pip python3-virtualenv -y
   pip3 -V || pause
   mkdir -p /envs
   cd /envs
