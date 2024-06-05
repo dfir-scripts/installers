@@ -31,7 +31,7 @@ function install_gift_ppa(){
 function main_install(){
   apt remove libewf2 -y
   apt-get update 
-  apt-get install python2 python3-pip python3-venv pipx git curl wget software-properties-common -y
+  apt-get install python2 python3-pip python3-venv pipx git curl fdisk wget software-properties-common -y
   pipx ensurepath
   cat /etc/issue|grep -Ei "u 2"\|"u 18" && install_gift_ppa
 
@@ -69,7 +69,7 @@ function main_install(){
   pip3 install $git_download/$latest_ver.tar.gz
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara gddrescue unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup"
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
