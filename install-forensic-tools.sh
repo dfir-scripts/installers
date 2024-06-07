@@ -50,7 +50,7 @@ function main_install(){
   source activate || pause
 
   #pip installs
-  sift_pip_pkgs="usnparser tabulate regex oletools pandas construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools pandas construct"
+  sift_pip_pkgs="usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools pandas"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
