@@ -85,7 +85,7 @@ function main_install(){
   git clone https://github.com/dkovar/analyzeMFT.git /usr/local/src/analyzeMFT
   [ "$(ls -A /usr/local/src/analyzeMFT/)" ] || pause
   cd /usr/local/src/analyzeMFT/
-  sudo git checkout 16d12822563cd5cae8675788134ac0ff6e9f5c01
+  git checkout 16d12822563cd5cae8675788134ac0ff6e9f5c01
   #python3 setup.py install || pause
 
   #Git BitsParser
