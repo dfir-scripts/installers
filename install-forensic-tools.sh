@@ -11,7 +11,7 @@ function display_usage(){
 
          -h Displays this help text
 
-		 "
+"
     exit
 }
 
@@ -50,7 +50,7 @@ function main_install(){
   source activate || pause
 
   #pip installs
-  sift_pip_pkgs="usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools pandas"
+  sift_pip_pkgs="usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx python-registry usnparser tabulate regex iocextract oletools pandas sqlalchemy"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -69,7 +69,7 @@ function main_install(){
   pip3 install $git_download/$latest_ver.tar.gz
 
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup"
+  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd python-is-python3 pff-tools python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup  ripgrep vinetto"
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
@@ -92,6 +92,12 @@ function main_install(){
   [ "$(ls -A /usr/local/src/BitsParser)" ] && \
   git -C /usr/local/src/BitsParser pull --force 2>/dev/null || \
   git clone https://github.com/fireeye/BitsParser.git /usr/local/src/BitsParser
+  
+  #Git DFIR-Scripts Siftgrab
+  [ "$(ls -A /usr/local/src/dfir-scripts/siftgrab 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/siftgrab pull --force 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/siftgrab.git /usr/local/src/dfir-scripts/siftgrab
+  [ "$(ls -A /usr/local/src/dfir-scripts/siftgrab)" ] && chmod -R 755 /usr/local/src/dfir-scripts/siftgrab/* || pause
 
   #Git DFIR-Script shell scripts
   [ "$(ls -A /usr/local/src/dfir-scripts/shellscripts 2>/dev/null)" ] && \
@@ -99,27 +105,42 @@ function main_install(){
   git clone https://github.com/dfir-scripts/shellscripts.git /usr/local/src/dfir-scripts/shellscripts
   [ "$(ls -A /usr/local/src/dfir-scripts/shellscripts)" ] && chmod 755 /usr/local/src/dfir-scripts/shellscripts/* || pause
 
-    #Git DFIR-Scripts Eventlog parsers
+  #Git DFIR-Scripts ermount
+  [ "$(ls -A /usr/local/src/dfir-scripts/ermount 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/ermount pull --force 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/EverReady-Disk-Mount.git /usr/local/src/dfir-scripts/ermount
+  [ "$(ls -A /usr/local/src/dfir-scripts/ermount)" ] && chmod -R 755 /usr/local/src/dfir-scripts/ermount/* || pause
+  
+  #Git DFIR-Scripts Eventlog parsers
   [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/WinEventLogs pull --force 2>/dev/null || \
   git clone https://github.com/dfir-scripts/WinEventLogs.git /usr/local/src/dfir-scripts/WinEventLogs
-  [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/WinEventLogs* || pause
+  [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/WinEventLogs/* || pause
 
-     #Git DFIR-Scripts Installer
+  #Git DFIR-Scripts Installer
   [ "$(ls -A /usr/local/src/dfir-scripts/installers 2>/dev/null)" ] && \
   git -C /usr/local/src/dfir-scripts/installers pull --force 2>/dev/null || \
   git clone https://github.com/dfir-scripts/installers.git /usr/local/src/dfir-scripts/installers
-  [ "$(ls -A /usr/local/src/dfir-scripts/WinEventLogs)" ] && chmod -R 755 /usr/local/src/dfir-scripts/installers || pause
+  [ "$(ls -A /usr/local/src/dfir-scripts/installers)" ] && chmod -R 755 /usr/local/src/dfir-scripts/installers || pause
 
-   Git Hindsight
-   [ "$(ls -A /usr/local/src/Hindsight/)" ] && \
-   git -C /usr/local/src/Hindsight pull --force 2>/dev/null|| \
-   git clone https://github.com/obsidianforensics/hindsight.git /usr/local/src/Hindsight
-   mkdir /usr/local/src/Hindsight/requirements
-   cd /usr/local/src/Hindsight/requirements
-   pip3 install -r /usr/local/src/Hindsight/requirements.txt
-   cd /usr/local/src
+  #Git DFIR-Scripts Prefetchruncounts
+  [ "$(ls -A /usr/local/src/dfir-scripts/prefetchruncounts 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/prefetchruncounts pull --force 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/prefetchruncounts.git /usr/local/src/dfir-scripts/prefetchruncounts
+  [ "$(ls -A /usr/local/src/dfir-scripts/prefetchruncounts)" ] && chmod -R 755 /usr/local/src/dfir-scripts/prefetchruncounts || pause
+  
+  #Git DFIR-Scripts Python-Registry
+  [ "$(ls -A /usr/local/src/dfir-scripts/Python-Registry 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/Python-Registry pull --force 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/Python-Registry.git /usr/local/src/dfir-scripts/Python-Registry
+  [ "$(ls -A /usr/local/src/dfir-scripts/Python-Registry)" ] && chmod -R 755 /usr/local/src/dfir-scripts/Python-Registry || pause  
 
+  #Git DFIR-Scripts csv2XLsheet
+  [ "$(ls -A /usr/local/src/dfir-scripts/csv2XLsheet 2>/dev/null)" ] && \
+  git -C /usr/local/src/dfir-scripts/csv2XLsheet pull --force 2>/dev/null || \
+  git clone https://github.com/dfir-scripts/csv2XLsheet.git /usr/local/src/dfir-scripts/csv2XLsheet
+  [ "$(ls -A /usr/local/src/dfir-scripts/csv2XLsheet)" ] && chmod -R 755 /usr/local/src/dfir-scripts/csv2XLsheet || pause
+  
   #Git and configure WMI Forensics
   [ "$(ls -A /usr/local/src/WMI_Forensics/ 2>/dev/null)" ] && \
   git -C /usr/local/src/WMI_Forensics pull --force 2>/dev/null || \
@@ -130,8 +151,8 @@ function main_install(){
   #Git Volatility3
   [ "$(ls -A /usr/local/src/volatility/ 2>/dev/null)" ] && \
   git -C /usr/local/src/volatility pull --force 2>/dev/null|| \
-  git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility
-  pip3 install -qr /usr/local/src/volatility/requirements.txt
+  git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility3
+  pip3 install -qr /usr/local/src/volatility3/requirements.txt
 
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
@@ -194,10 +215,10 @@ function main_install(){
   git -C /usr/local/src/Python-Registry pull --force 2>/dev/null || \
   git clone https://github.com/williballenthin/python-registry.git /usr/local/src/Python-Registry
   
-  #Git INDXRipper
-  [ "$(ls -A /usr/local/src/INDXRipper)" ] && \
-  git -C /usr/local/src/INDXRipper pull --force 2>/dev/null || \
-  git clone https://github.com/harelsegev/INDXRipper.git /usr/local/src/INDXRipper
+    #Git BMC-Tools
+  [ "$(ls -A /usr/local/src/BMC-Tools)" ] && \
+  git -C /usr/local/src/BMC-Tools pull --force 2>/dev/null || \
+  git clone https://github.com/ANSSI-FR/bmc-tools.git /usr/local/src/BMC-Tools
   
   #Git and configure Harlan Carvey tools
   [ "$(ls -A /usr/local/src/keydet89/tools/ 2>/dev/null)" ] && \
@@ -205,9 +226,10 @@ function main_install(){
   git clone https://github.com/keydet89/Tools.git /usr/local/src/keydet89/tools/
   chmod 755 /usr/local/src/keydet89/tools/source/* || pause
 
-  #Install Impacket
+  #Alternative python module installs 
   pipx install impacket
   pipx install pyhindsight
+  pipx install  ntdisector  
   chmod 755 /root/.local/pipx/venvs/pyhindsight/bin/hindsight.py
   
   # Reverted breaks ermount.sh
@@ -278,14 +300,19 @@ function main_install(){
   wget  https://d1kpmuwb7gvu1i.cloudfront.net/ftkimager.3.1.1_ubuntu64.tar.gz -O - | \
   tar -xzvf - -C /usr/local/src/dfir-scripts/  && \
   chmod 755 /usr/local/src/dfir-scripts/ftkimager && mv /usr/local/src/dfir-scripts/ftkimager /usr/local/bin/
-  
+
   # Download Volatility 2.6
   mkdir -p /usr/local/src/volatility2.6
-  wget -qO - http://downloads.volatilityfoundation.org/releases/2.6/volatility-2.6.zip | \
-  busybox unzip - -d /usr/local/src/volatility2.6/
+  [ "$(ls -A /usr/local/src/volatility2.6 2>/dev/null)" ] || \
+  wget -O /opt/app/volatility2.6/vol26.zip https://github.com/volatilityfoundation/volatility/releases/download/2.6.1/volatility_2.6_lin64_standalone.zip
+  unzip -j /opt/app/volatility2.6/vol26.zip -d /opt/app/volatility2.6 
+  chmod 755 /opt/app/volatility2.6/volatility_2.6_lin64_standalone
+  mv /opt/app/volatility2.6/volatility_2.6_lin64_standalone /opt/app/volatility2.6/vol26
+  rm /tmp/vol26.zip
 
   #wget winmem_decompress
   wget -O /usr/local/bin/winmem_decompress.py https://raw.githubusercontent.com/msuhanov/winmem_decompress/master/winmem_decompress.py
+  chmod 755 /usr/local/bin/winmem_decompress.py
 
 #Download lf File Browser
   curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | \
@@ -293,15 +320,21 @@ function main_install(){
   awk -F'"' '{system("wget -P /tmp "$4) }' && \
   tar -xvf /tmp/lf-linux*.gz -C /tmp
   chmod 755 /tmp/lf && mv /tmp/lf /usr/local/bin/lf
+  rm /tmp/lf-linux*.gz
 
   # Download lolbas.csv
   mkdir -p /usr/local/src/keywords
   wget -O /usr/local/src/keywords/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv
   cat /usr/local/src/keywords/lolbas.csv |awk -F'"' '{print $2}'|sort -u |tee /usr/local/src/keywords/lolbas-files.txt
+  [ "$(ls -A /usr/local/src/keywords/awesome-lists/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/keywords/awesome-lists/ pull --force 2>/dev/null || \
+  git clone https://github.com/mthcht/awesome-lists.git /usr/local/src/keywords/awesome-lists/
 
   wget -O /usr/local/src/keywords/only_keywords_regex.txt https://raw.githubusercontent.com/mthcht/ThreatHunting-Keywords/main/only_keywords_regex.txt
+  wget -O /usr/local/src/keywords/only_keywords_regex_better_perf.txt https://raw.githubusercontent.com/mthcht/ThreatHunting-Keywords/main/only_keywords_regex_better_perf.txt
   vi -c ":set nobomb" -c ":wq" /usr/local/src/keywords/only_keywords_regex.txt
-  
+  vi -c ":set nobomb" -c ":wq" /usr/local/src/keywords/only_keywords_regex_better_perf.txt
+
   # Download Jumplist APPIDs
   mkdir -p /usr/local/src/EricZimmerman
   wget -O /usr/local/src/EricZimmerman/AppIDs.txt https://raw.githubusercontent.com/EricZimmerman/JumpList/master/JumpList/Resources/AppIDs.txt
@@ -324,12 +357,15 @@ function main_install(){
   wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
 
-  # Download dfir-scripts Tools
-  mkdir -p /usr/local/src/dfir-scripts/{python,installers,ermount,siftgrab}
-  wget -O /usr/local/src/dfir-scripts/siftgrab/siftgrab https://raw.githubusercontent.com/dfir-scripts/siftgrab/master/siftgrab || pause
-  wget -O /usr/local/src/dfir-scripts/ermount/ermount.sh https://raw.githubusercontent.com/dfir-scripts/EverReady-Disk-Mount/master/ermount.sh || pause 
-  wget -O /usr/local/src/dfir-scripts/python/prefetchruncounts.py https://raw.githubusercontent.com/dfir-scripts/prefetchruncounts/master/prefetchruncounts.py || pause 
-  wget -O /usr/local/src/dfir-scripts/python/winservices.py https://raw.githubusercontent.com/dfir-scripts/Python-Registry/master/winservices.py || pause
+  # Download MemProcFS
+  rm -r /usr/local/src/MemProcFS/ 2>/dev/null
+  mkdir -p /usr/local/src/MemProcFS
+  cd /usr/local/src/MemProcFS
+  curl -s "https://api.github.com/repos/ufrisk/MemProcFS/releases/latest" | \
+  jq -r '.assets[] | .browser_download_url' |grep linux_x64| sudo xargs curl -LO
+  ls -A && tar -xvf /usr/local/src/MemProcFS/*.gz -C  /usr/local/src/MemProcFS/ && \
+  rm /usr/local/src/MemProcFS/*.gz
+
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
@@ -352,6 +388,7 @@ deactivate
 
 
 [ $(whoami) != "root" ] && echo "Requires Root!" && exit
+cat /etc/issue|grep -Ei "u 24"\|"u 23" && echo "Try installing Siftgrab with Ubuntu 22.04, newer versions are not supported :(" && exit
 echo "cpu check"
 DEBIAN_FRONTEND=noninteractive
 arch |grep x86_64 || display_usage
