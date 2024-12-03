@@ -230,7 +230,7 @@ function main_install(){
   #Alternative python module installs 
   #pipx install  ntdissector
   pipx install impacket
-  pipx install pyhindsight
+  pipx install pyhindsight==20230327.0
   chmod 755 /root/.local/pipx/venvs/pyhindsight/bin/hindsight.py
   
   # Reverted breaks ermount.sh
