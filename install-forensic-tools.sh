@@ -30,7 +30,7 @@ function install_gift_ppa(){
 
 function main_install(){
   apt remove libewf2 -y
-  apt-get update 
+  apt update 
   apt-get install python2 python3-pip python3-venv pipx git curl fdisk wget software-properties-common -y
   pipx ensurepath
 
@@ -50,7 +50,7 @@ function main_install(){
   source activate || pause
 
   #pip installs
-  sift_pip_pkgs="prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy"
+  sift_pip_pkgs="psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -161,7 +161,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/volatility/ 2>/dev/null)" ] && \
   git -C /usr/local/src/volatility pull --force 2>/dev/null|| \
   git clone https://github.com/volatilityfoundation/volatility3.git /usr/local/src/volatility3
-  pip3 install -qr /usr/local/src/volatility3/requirements.txt
+  #pip3 install -qr /usr/local/src/volatility3/requirements.txt
 
   #Git kacos2000 Scripts
   [ "$(ls -A /usr/local/src/kacos2000/Queries 2>/dev/null)" ] && \
@@ -231,6 +231,7 @@ function main_install(){
   #pipx install  ntdissector
   pipx install impacket
   pipx install pyhindsight==20230327.0
+  
   chmod 755 /root/.local/pipx/venvs/pyhindsight/bin/hindsight.py
   
   # Reverted breaks ermount.sh
@@ -316,12 +317,13 @@ function main_install(){
   mkdir -p /usr/local/src/keywords
   wget -O /usr/local/src/keywords/lolbas.csv https://lolbas-project.github.io/api/lolbas.csv
   cat /usr/local/src/keywords/lolbas.csv |awk -F'"' '{print $2}'|sort -u |tee /usr/local/src/keywords/lolbas-files.txt
-  [ "$(ls -A /usr/local/src/keywords/awesome-lists/ 2>/dev/null)" ] && \
-  #git -C /usr/local/src/keywords/awesome-lists/ pull --force 2>/dev/null || \
-  #git clone https://github.com/mthcht/awesome-lists.git /usr/local/src/keywords/awesome-lists/
+  [ "$(ls -A /usr/local/src/keywords/ThreatHunting-Keywords-yara-rules/ 2>/dev/null)" ] && \
+  git -C /usr/local/src/ThreatHunting-Keywords-yara-rules pull --force 2>/dev/null || \
+  git clone https://github.com/mthcht/ThreatHunting-Keywords-yara-rules.git /usr/local/src/keywords/ThreatHunting-Keywords-yara-rules/
 
   wget -O /usr/local/src/keywords/only_keywords_regex.txt https://raw.githubusercontent.com/mthcht/ThreatHunting-Keywords/main/only_keywords_regex.txt
   wget -O /usr/local/src/keywords/only_keywords_regex_better_perf.txt https://raw.githubusercontent.com/mthcht/ThreatHunting-Keywords/main/only_keywords_regex_better_perf.txt
+  wget -O /usr/local/src/keywords/all.yara https://github.com/mthcht/ThreatHunting-Keywords-yara-rules/raw/refs/heads/main/yara_rules/all.yara
   vi -c ":set nobomb" -c ":wq" /usr/local/src/keywords/only_keywords_regex.txt
   vi -c ":set nobomb" -c ":wq" /usr/local/src/keywords/only_keywords_regex_better_perf.txt
 
@@ -335,6 +337,10 @@ function main_install(){
   # Get Job Parser
   wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
+  
+  #  Get compiled version of Sidr
+  wget -O /usr/local/bin/sidr https://github.com/dfir-scripts/sidr/raw/refs/heads/main/sidr || pause
+  chmod 755 /usr/local/bin/sidr
 
   # Download MemProcFS
   rm -r /usr/local/src/MemProcFS/ 2>/dev/null
