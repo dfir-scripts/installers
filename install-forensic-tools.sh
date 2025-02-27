@@ -36,7 +36,7 @@ function main_install(){
 
 
   cat /etc/issue|grep -i kali && \
-  apt-get install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils cifs-utils python3-libesedb plaso -y
+  apt-get install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb plaso -y
 
   ############### Forensic Tools Download, Install and Confiuration ##########################
   #Make Disk Mount and Cases Directories
@@ -50,7 +50,7 @@ function main_install(){
   source activate || pause
 
   #pip installs
-  sift_pip_pkgs="psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy"
+  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -71,7 +71,7 @@ function main_install(){
   #Install Gift PPA
   cat /etc/issue|grep -Ei "u 22"\|"u 18" && install_gift_ppa
   #Install Applications from Apt
-  sift_apt_pkgs="fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup  ripgrep vinetto"
+  sift_apt_pkgs="hashid cifs-utils fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup  ripgrep vinetto"
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
@@ -347,7 +347,7 @@ function main_install(){
   mkdir -p /usr/local/src/MemProcFS
   cd /usr/local/src/MemProcFS
   curl -s "https://api.github.com/repos/ufrisk/MemProcFS/releases/latest" | \
-  jq -r '.assets[] | .browser_download_url' |grep linux_x64| sudo xargs curl -LO
+  jq -r '.assets[] | .browser_download_url' |grep linux_x64| xargs curl -LO
   ls -A && tar -xvf /usr/local/src/MemProcFS/*.gz -C  /usr/local/src/MemProcFS/ && \
   rm /usr/local/src/MemProcFS/*.gz
 
@@ -368,6 +368,17 @@ function main_install(){
     sed -i '/^#! c:[\]perl[\]bin[\]perl.exe/d' $d && sed -i "1i #!$a" $d
     cp $d /usr/local/bin/$file_name || pause
   done
+  
+wget -O /tmp/setup-zimmerman-tools.sh https://gist.githubusercontent.com/dfir-scripts/10034ce77b04db988dcafbbb2567a426/raw/setup-zimmerman-tools.sh
+chmod 755 /tmp/setup-zimmerman-tools.sh
+/tmp/setup-zimmerman-tools.sh
+rm /tmp/setup-zimmerman-tools.sh
+cd /opt/zimmermantools
+/opt/venv/bin/gdown 1qfiqzv3geQNYsr6R8sZaWPl7nO6NlLeu
+unzip -o Zimmerman-linux.zip
+chmod 755 WxTCmd/WxTCmd
+chmod 755 SQLECmd/SQLECmd
+find /opt/zimmermantools/Zimmerman-linux.zip -delete
 deactivate
 }
 
@@ -390,5 +401,6 @@ echo "set org.gnome.desktop.media-handling automount false"
 echo ""
 echo  "   Install Complete!"
 
-####DELETE sqlite miner, volatility 2.6, DEXRAY, ftkimager, INDXParse, indxripper 
-####ADDED prefetchcarve  usncarve
+## Changelog
+####DELETED 
+####ADDED powershell dotnet core registryspy, WSL GUI, Zimmermantools w/ SANS SiFT aliases
