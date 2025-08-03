@@ -40,7 +40,7 @@ function main_install(){
 
   ############### Forensic Tools Download, Install and Confiuration ##########################
   #Make Disk Mount and Cases Directories
-  mkdir -p /mnt/{raw,image_mount,vss,shadow,bde,smb,usb}
+  mkdir -p /mnt/{raw,image_mount,vss,shadow,bde,smb,usb,zip}
   mkdir -p /cases
 
 # setup python virtual environment
@@ -71,7 +71,7 @@ function main_install(){
   #Install Gift PPA
   cat /etc/issue|grep -Ei "u 22"\|"u 18" && install_gift_ppa
   #Install Applications from Apt
-  sift_apt_pkgs="hashid cifs-utils fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup  ripgrep vinetto"
+  sift_apt_pkgs="hashid cifs-utils fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost caffeine parallel fuse-zip testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup  ripgrep vinetto fd-find"
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
@@ -197,7 +197,7 @@ function main_install(){
   [ "$(ls -A /usr/local/src/Zircolite)" ] && \
   git -C /usr/local/src/Zircolite pull --force 2>/dev/null || \
   git clone https://github.com/wagga40/Zircolite.git /usr/local/src/Zircolite
-  pip3 install -r /usr/local/src/Zircolite/requirements.txt
+  pip3 install -r /usr/local/src/Zircolite/requirements.full.txt
 
   #Git EventTranscriptParser
   [ "$(ls -A /usr/local/src/EventTranscriptParser)" ] && \
@@ -284,6 +284,13 @@ function main_install(){
   cp hayabusa-*-lin-x64-musl /usr/local/bin/hayabusa 2>/dev/null
   chmod 755 /usr/local/bin/hayabusa
   
+  #Install Ntdissector
+  mkdir -p /usr/local/src/Ntdissector
+  cd /usr/local/src/
+  [ -d /opt/app/Ntdissector/ntdissector ] || git clone https://github.com/synacktiv/ntdissector.git Ntdissector
+  python3 -m pip install ./Ntdissector
+
+  
   #Download Event Hussar
   wget -qO - https://github.com/yarox24/EvtxHussar/releases/download/1.8/EvtxHussar1.8_linux_amd64.zip |busybox unzip - -d /usr/local/src/
   chmod 755 /usr/local/src/EvtxHussar/EvtxHussar
@@ -337,6 +344,9 @@ function main_install(){
   # Get Job Parser
   wget -O /usr/local/src/dfir-scripts/jobparser.py https://raw.githubusercontent.com/gleeda/misc-scripts/master/misc_python/jobparser.py || pause
   mv /usr/local/src/dfir-scripts/jobparser.py /usr/local/bin/
+  # Get mount that thing
+  wget -O /usr/local/bin/mtt https://raw.githubusercontent.com/halpomeranz/dfis/refs/heads/master/mtt.sh
+  chmod 755 /usr/local/bin/mtt
   
   #  Get compiled version of Sidr
   wget -O /usr/local/bin/sidr https://github.com/dfir-scripts/sidr/raw/refs/heads/main/sidr || pause
@@ -358,8 +368,9 @@ function main_install(){
   #install RegRipper.git and RegRipper install script
   /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh
 
-  #Create a symbolic link to /opt/share
+  #Create a symbolic links to /opt/share and for fd
   [ -d "/opt/app" ] || ln -s /usr/local/src/ /opt/app
+  ln -s $(which fdfind) /usr/local/bin/fd
   #set Windows Perl scripts in Keydet89/Tools/source
   find /usr/local/src/keydet89/tools/source -type f 2>/dev/null|grep pl$ | while read d;
   do
