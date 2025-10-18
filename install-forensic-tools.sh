@@ -341,6 +341,9 @@ function main_install(){
     cp $d /usr/local/bin/$file_name || pause
   done
   
+
+wget -O /opt/venv/bin/nthasher.py https://gist.githubusercontent.com/dfir-scripts/33a3730384cdbaf7ef5b4a234bd1fd4c/raw/447ac9723d694097afdbebc512f7c117399430e7/nthasher.py
+chmod 755 /opt/venv/bin/nthasher.py
 wget -O /tmp/setup-zimmerman-tools.sh https://gist.githubusercontent.com/dfir-scripts/10034ce77b04db988dcafbbb2567a426/raw/setup-zimmerman-tools.sh
 chmod 755 /tmp/setup-zimmerman-tools.sh
 /tmp/setup-zimmerman-tools.sh
