@@ -31,11 +31,23 @@ function install_gift_ppa(){
 function main_install(){
   apt remove libewf2 -y
   apt update 
-  apt-get install python3-pip python3*-venv pipx git curl fdisk wget software-properties-common busybox -y
-  pipx ensurepath
+  apt-get update && \
+    apt-get install -y file python3-pip python3*-venv git curl fdisk wget \
+    software-properties-common busybox libffi-dev libssl-dev \
+    apt-transport-https ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-  cat /etc/issue|grep -i kali && \
-  apt-get install gnome-terminal libewf-dev ewf-tools libbde-utils libvshadow-utils libesedb-utils xmount liblnk-utils libevtx-utils python3-libesedb plaso -y
+  rm -f /usr/lib/python3*/EXTERNALLY-MANAGED
+# Install impacket and dependencies in /root/.local
+  python3 -m pip install --no-cache-dir --user impacket
+  python3 -m pip install --no-cache-dir --user cryptography pyasn1 pyasn1-modules
+
+  cd /root/.local/bin && \
+    find . -name "*.py" -type f ! -name "secretsdump.py" -delete
+
+# Symlink secretsdump.py to /usr/local/bin
+ln -sf /root/.local/bin/secretsdump.py /usr/local/bin/secretsdump.py
+chmod +x /usr/local/bin/secretsdump.py
 
   ############### Forensic Tools Download, Install and Confiuration ##########################
   #Make Disk Mount and Cases Directories
@@ -47,14 +59,18 @@ function main_install(){
   python3 -m venv $VIRTUAL_ENV
   PATH="$VIRTUAL_ENV/bin:$PATH"
   source activate || pause
+  
+
 
   #pip installs
-  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown"
+  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown pyhindsight==20230327.0"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
-
+  chmod 755 /opt/venv/bin/hindsight.py
+  chmod 755 /opt/venv/bin/hindsight_gui.py
+  
   #Install yarp
   git_release="https://github.com/msuhanov/yarp/releases/"
   git_download="https://github.com/msuhanov/yarp/archive"
@@ -206,13 +222,6 @@ function main_install(){
   git -C /usr/local/src/keydet89/tools/ pull --force 2>/dev/null || \
   git clone https://github.com/keydet89/Tools.git /usr/local/src/keydet89/tools/
   chmod 755 /usr/local/src/keydet89/tools/source/* || pause
-
-  #Alternative python module installs 
-  PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin pipx install impacket
-  pip install pyhindsight==20230327.0
-  
-  chmod 755 /opt/venv/bin/hindsight.py
-  chmod 755 /opt/venv/bin/hindsight_gui.py
 
   #Download evtx_dump
   mkdir -p /usr/local/src/omerbenamram/evtx_dump/
