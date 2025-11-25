@@ -63,11 +63,12 @@ chmod +x /usr/local/bin/secretsdump.py
 
 
   #pip installs
-  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown pyhindsight==20230327.0"
+  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown pyhindsight"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
   done
+  pip3 install git+https://github.com/cclgroupltd/ccl_chromium_reader.git
   chmod 755 /opt/venv/bin/hindsight.py
   chmod 755 /opt/venv/bin/hindsight_gui.py
   
@@ -93,16 +94,6 @@ chmod +x /usr/local/bin/secretsdump.py
     apt-get install $apt_pkg -y
     dpkg -S $apt_pkg && echo "$apt_pkg Installed!"|| pause
   done
-
-  #Git and configure Package Installations and Updates
-  #Git analyzeMFT
-  [ "$(ls -A /usr/local/src/analyzeMFT/ 2>/dev/null)" ] && \
-  cd /usr/local/src/analyzeMFT
-  git -C /usr/local/src/analyzeMFT pull --force 2>/dev/null|| \
-  git clone https://github.com/dkovar/analyzeMFT.git /usr/local/src/analyzeMFT
-  [ "$(ls -A /usr/local/src/analyzeMFT/)" ] || pause
-  cd /usr/local/src/analyzeMFT/
-  git checkout 16d12822563cd5cae8675788134ac0ff6e9f5c01
 
   #Git BitsParser
   [ "$(ls -A /usr/local/src/BitsParser)" ] && \
@@ -211,6 +202,12 @@ chmod +x /usr/local/bin/secretsdump.py
   git clone https://github.com/dfir-scripts/4n6_misc.git /usr/local/src/Silv3rhorn
   cp /usr/local/src/Silv3rhorn/*.py /opt/venv/bin/
   chmod 755 /opt/venv/bin/registryFlush.py
+
+  #Git and configure Package Installations and Updates
+  #Git analyzeMFT
+  git clone https://github.com/dkovar/analyzeMFT.git /usr/local/src/analyzeMFT
+  cd /usr/local/src/analyzeMFT/
+  git checkout 16d12822563cd5cae8675788134ac0ff6e9f5c01
 
     #Git BMC-Tools
   [ "$(ls -A /usr/local/src/BMC-Tools)" ] && \
@@ -334,7 +331,8 @@ chmod +x /usr/local/bin/secretsdump.py
   chmod -R 755 /usr/local/src/dfir-scripts/*  || pause
   cp /usr/local/src/dfir-scripts/siftgrab/siftgrab /usr/local/bin/siftgrab || pause
   cp /usr/local/src/dfir-scripts/ermount/ermount.sh /usr/local/bin/ermount || pause
-
+  cp /usr/local/src/dfir-scripts/ermount/er2.sh /usr/local/bin/er2 || pause
+ 
   #install RegRipper.git and RegRipper install script
   /usr/local/src/dfir-scripts/installers/RegRipper30-apt-git-Install.sh
 
