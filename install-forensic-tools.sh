@@ -63,7 +63,7 @@ chmod +x /usr/local/bin/secretsdump.py
 
 
   #pip installs
-  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown pyhindsight parted libfsapfs-tools"
+  sift_pip_pkgs="registryspy psutil prefetchcarve usncarve LnkParse3 usnparser tabulate puremagic construct libesedb-python==20181229 openpyxl>=2.6.2 pefile>=2019.4.18 python-registry>=1.3.1 pywin32-ctypes>=0.2.0 six>=1.12.0 bits_parser pyarrow evtxtract beautifulsoup4 libscca-python==20240427 setuptools==58.2.0 python-evtx regex oletools pandas sqlalchemy gdown pyhindsight"
   for pip_pkg in $sift_pip_pkgs;
   do
     pip3 install $pip_pkg || pause
@@ -87,7 +87,7 @@ chmod +x /usr/local/bin/secretsdump.py
   #Install Gift PPA
   install_gift_ppa
   #Install Applications from Apt
-  sift_apt_pkgs="hashid cifs-utils fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost caffeine parallel fuse-zip testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup ripgrep vinetto fd-find"
+  sift_apt_pkgs="hashid cifs-utils fdupes sleuthkit attr dcfldd afflib-tools autopsy qemu-utils lvm2 exfatprogs kpartx pigz exif dc3dd pff-tools python-is-python3 python3-lxml sqlite3 jq yara unzip p7zip-full p7zip-rar hashcat foremost caffeine parallel fuse-zip testdisk chntpw graphviz ffmpeg mediainfo ifuse clamav geoip-bin geoip-database geoipupdate libsnappy-dev gnumeric xxd reglookup ripgrep vinetto fd-find parted libfsapfs-tools"
   for apt_pkg in $sift_apt_pkgs;
   do
     echo "Installing $apt_pkg"
